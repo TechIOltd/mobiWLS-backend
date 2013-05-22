@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.techio.mobiwls.backend</groupId>
+	<artifactId>mobiwls-backend</artifactId>
+	<version>dev-SNAPSHOT</version>
+	<packaging>pom</packaging>
+  <inceptionYear>2013</inceptionYear>
+
+	<developers>
+		<developer>
+			<name>Filip Slavik</name>
+			<id>filip</id>
+			<email>filip@techio.com</email>
+			<organization>TechIO Ltd</organization>
+			<roles>
+				<role>Project Core Developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<properties>
+		<json-simple.version>1.1</json-simple.version>
+		<servlet-api.version>2.5</servlet-api.version>
+
+	</properties>
+	<profiles>
+		<profile>
+			<id>PRE</id>
+			<properties>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>PRO</id>
+			<properties>
+
+
+			</properties>
+		</profile>
+	</profiles>
+
+
+
+	<dependencyManagement>
+		<dependencies>
+
+
+
+			<dependency>
+				<groupId>com.googlecode.json-simple</groupId>
+				<artifactId>json-simple</artifactId>
+				<version>${json-simple.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>${servlet-api.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax</groupId>
+				<artifactId>javaee-api</artifactId>
+				<version>6.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.oracle.weblogic</groupId>
+				<artifactId>wls-api</artifactId>
+				<version>10.3.3.0</version>
+				<scope>provided</scope>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+						<encoding>UTF-8</encoding>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<configuration>
+						<encoding>UTF-8</encoding>
+					</configuration>
+				</plugin>
+
+
+
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<modules>
+		<module>mod-ejb</module>
+		<module>mod-web</module>
+		<module>mod-ear</module>
+	</modules>
+
+	<repositories>
+
+
+	</repositories>
+</project>
