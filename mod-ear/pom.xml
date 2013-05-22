@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<parent>
+		<groupId>com.techio.mobiwls.backend</groupId>
+		<artifactId>mobiwls-backend</artifactId>
+		<version>dev-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>mobiwls-j2ee</artifactId>
+	<packaging>ear</packaging>
+
+
+  <build>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-ear-plugin</artifactId>
+        <configuration>
+          <version>5</version>
+          <displayName>Module</displayName>
+          <defaultLibBundleDir>APP-INF/lib</defaultLibBundleDir>
+          <filtering>true</filtering>
+          <encoding>UTF-8</encoding>
+          <modules>
+            
+          
+          </modules>
+          <archive>
+            <manifestEntries>
+              <build-mode>${build-mode}</build-mode>
+              <build-tag>${build-tag}</build-tag>
+              <Implementation-Build>${project.version}</Implementation-Build>
+              <Weblogic-Application-Version>${project.version}-${build-tag}</Weblogic-Application-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+  <dependencies>
+    
+    
+    
+
+
+  </dependencies>
+
+</project>
