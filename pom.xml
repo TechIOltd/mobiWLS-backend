@@ -104,8 +104,8 @@
 	</build>
 
 	<modules>
+		
 		<module>mod-ejb</module>
-		<module>mod-web</module>
 		<module>mod-ear</module>
 	</modules>
 
