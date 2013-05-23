@@ -1,87 +1,66 @@
 <?xml version="1.0"?>
-<project
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <parent>
-    <groupId>com.techio.mobiwls.backend</groupId>
-  <artifactId>mobiwls-backend</artifactId>
-    <version>dev-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
+	<parent>
+		<groupId>com.techio.mobiwls.backend</groupId>
+		<artifactId>mobiwls-backend</artifactId>
+		<version>dev-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
 
-  <artifactId>mobiwls-ws</artifactId>
-  <packaging>war</packaging>
+	<artifactId>mobiwls-ws</artifactId>
+	<packaging>war</packaging>
 
-  <modelVersion>4.0.0</modelVersion>
-
-  
-
-  <properties>
-    <webapp-res-src>${basedir}/conf</webapp-res-src>
-    <webapp-res-dst>${project.build.directory}/webapp</webapp-res-dst>
-  </properties>
-
-  <build>
-    <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <filters>
-            <filter>
-              ${basedir}/configuration/properties/configuration-${build-mode}.properties
-            </filter>
-          </filters>
-          <webResources>
-            <resource>
-              <directory>${basedir}/configuration</directory>
-              <targetPath>WEB-INF</targetPath>
-              <!-- enable filtering -->
-              <filtering>true</filtering>
-              <excludes>
-                <exclude>**/properties/**</exclude>
-              </excludes>
-            </resource>
-           
-          </webResources>
-          <archive>
-            <manifestEntries>
-              <build-mode>${build-mode}</build-mode>
-              <build-tag>${build-tag}</build-tag>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-    <filters>
-      <filter>${basedir}/configuration/properties/configuration-${build-mode}.properties</filter>
-    </filters>
-  </build>
+	<modelVersion>4.0.0</modelVersion>
 
 
-  <dependencies>
 
-    <dependency>
-      <groupId>javax</groupId>
-      <artifactId>javaee-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
+	<properties>
+		<webapp-res-src>${basedir}/conf</webapp-res-src>
+		<webapp-res-dst>${project.build.directory}/webapp</webapp-res-dst>
+	</properties>
 
-    <dependency>
-      <groupId>com.googlecode.json-simple</groupId>
-      <artifactId>json-simple</artifactId>
-      <scope>provided</scope>
-    </dependency>
+	<build>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<build-mode>${build-mode}</build-mode>
+							<build-tag>${build-tag}</build-tag>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
 
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
+	</build>
 
-  </dependencies>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-bundle</artifactId>
+			<version>1.17.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
 
 </project>
