@@ -9,7 +9,7 @@
 	<artifactId>mobiwls-backend</artifactId>
 	<version>dev-SNAPSHOT</version>
 	<packaging>pom</packaging>
-  <inceptionYear>2013</inceptionYear>
+	<inceptionYear>2013</inceptionYear>
 
 	<developers>
 		<developer>
@@ -26,20 +26,23 @@
 	<properties>
 		<json-simple.version>1.1</json-simple.version>
 		<servlet-api.version>2.5</servlet-api.version>
-
+		<build-tag>DEV</build-tag>
+		<build-mode>Development</build-mode>
 	</properties>
 	<profiles>
 		<profile>
 			<id>PRE</id>
 			<properties>
+				<build-tag>PRE</build-tag>
+				<build-mode>PreProduction</build-mode>
 			</properties>
 		</profile>
 
 		<profile>
 			<id>PRO</id>
 			<properties>
-
-
+				<build-tag>PRO</build-tag>
+				<build-mode>Production</build-mode>
 			</properties>
 		</profile>
 	</profiles>

@@ -3,6 +3,9 @@
  */
 package com.techio.mobiwls.rest.resources;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author slavikos
  * 
@@ -46,6 +49,20 @@ public class DomainInfo {
 	 * Specifies whether all servers in this domain run in production mode.
 	 */
 	private boolean productionMode;
+	
+	/**
+	 * The servers configured within this domain.
+	 */
+	private List<String> servers = new ArrayList<String>();
+	
+	private List<String> clusters = new ArrayList<String>();
+	
+	private List<String> jmsServers = new ArrayList<String>();
+	
+	private List<String> dataSources = new ArrayList<String>();
+	
+	private List<String> deployments = new ArrayList<String>();
+	
 
 	public String getConfigurationVersion() {
 		return configurationVersion;
@@ -102,4 +119,48 @@ public class DomainInfo {
 	public void setProductionMode(boolean productionMode) {
 		this.productionMode = productionMode;
 	}
+
+	public List<String> getServers() {
+		return servers;
+	}
+
+	public void setServers(List<String> servers) {
+		this.servers = servers;
+	}
+
+	public List<String> getClusters() {
+		return clusters;
+	}
+
+	public void setClusters(List<String> clusters) {
+		this.clusters = clusters;
+	}
+
+	public List<String> getJmsServers() {
+		return jmsServers;
+	}
+
+	public void setJmsServers(List<String> jmsServers) {
+		this.jmsServers = jmsServers;
+	}
+
+	public List<String> getDataSources() {
+		return dataSources;
+	}
+
+	public void setDataSources(List<String> dataSources) {
+		this.dataSources = dataSources;
+	}
+
+	public List<String> getDeployments() {
+		return deployments;
+	}
+
+	public void setDeployments(List<String> deployments) {
+		this.deployments = deployments;
+	}
+
+	
+	
+	
 }
