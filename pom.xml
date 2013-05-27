@@ -28,6 +28,7 @@
 		<servlet-api.version>2.5</servlet-api.version>
 		<build-tag>DEV</build-tag>
 		<build-mode>Development</build-mode>
+		<ehcache.version>2.6.6</ehcache.version>
 	</properties>
 	<profiles>
 		<profile>
@@ -79,6 +80,11 @@
 				<scope>provided</scope>
 			</dependency>
 
+			<dependency>
+				<groupId>net.sf.ehcache</groupId>
+				<artifactId>ehcache-core</artifactId>
+				<version>${ehcache.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

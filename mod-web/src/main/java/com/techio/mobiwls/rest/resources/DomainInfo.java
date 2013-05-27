@@ -11,7 +11,10 @@ import java.util.List;
  * 
  */
 public class DomainInfo {
+	
+	public static final String CACHE_KEY = "DomainInfo";
 
+	private List<String> clusters = new ArrayList<String>();
 	/**
 	 * The release identifier for the configuration. This identifier will be
 	 * used to indicate the version of the configuration. All server generated
@@ -29,6 +32,8 @@ public class DomainInfo {
 	 * Administration Console
 	 */
 	private String consolePath;
+	private List<String> dataSources = new ArrayList<String>();
+	private List<String> deployments = new ArrayList<String>();
 	/**
 	 * Defines the common version of all servers in a domain. In a domain
 	 * containing servers that are not all at the same release version, this
@@ -36,33 +41,35 @@ public class DomainInfo {
 	 * assume.
 	 */
 	private String domainVersion;
+
+	private List<String> jmsServers = new ArrayList<String>();
+
 	/**
 	 * Return the last time this domain was updated. This is guaranteed to be
 	 * unique for a given transactional modification.
 	 */
 	private Long lastModificationTime;
+
 	/**
 	 * The user-specified name of this MBean instance.
 	 */
 	private String name;
+
 	/**
 	 * Specifies whether all servers in this domain run in production mode.
 	 */
 	private boolean productionMode;
-	
+
 	/**
 	 * The servers configured within this domain.
 	 */
 	private List<String> servers = new ArrayList<String>();
-	
-	private List<String> clusters = new ArrayList<String>();
-	
-	private List<String> jmsServers = new ArrayList<String>();
-	
-	private List<String> dataSources = new ArrayList<String>();
-	
-	private List<String> deployments = new ArrayList<String>();
-	
+
+	private String version;
+
+	public List<String> getClusters() {
+		return clusters;
+	}
 
 	public String getConfigurationVersion() {
 		return configurationVersion;
@@ -72,8 +79,20 @@ public class DomainInfo {
 		return consolePath;
 	}
 
+	public List<String> getDataSources() {
+		return dataSources;
+	}
+
+	public List<String> getDeployments() {
+		return deployments;
+	}
+
 	public String getDomainVersion() {
 		return domainVersion;
+	}
+
+	public List<String> getJmsServers() {
+		return jmsServers;
 	}
 
 	public Long getLastModificationTime() {
@@ -84,12 +103,24 @@ public class DomainInfo {
 		return name;
 	}
 
+	public List<String> getServers() {
+		return servers;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
 	public boolean isConsoleEnabled() {
 		return consoleEnabled;
 	}
 
 	public boolean isProductionMode() {
 		return productionMode;
+	}
+
+	public void setClusters(List<String> clusters) {
+		this.clusters = clusters;
 	}
 
 	public void setConfigurationVersion(String configurationVersion) {
@@ -104,8 +135,20 @@ public class DomainInfo {
 		this.consolePath = consolePath;
 	}
 
+	public void setDataSources(List<String> dataSources) {
+		this.dataSources = dataSources;
+	}
+
+	public void setDeployments(List<String> deployments) {
+		this.deployments = deployments;
+	}
+
 	public void setDomainVersion(String domainVersion) {
 		this.domainVersion = domainVersion;
+	}
+
+	public void setJmsServers(List<String> jmsServers) {
+		this.jmsServers = jmsServers;
 	}
 
 	public void setLastModificationTime(Long lastModificationTime) {
@@ -120,47 +163,75 @@ public class DomainInfo {
 		this.productionMode = productionMode;
 	}
 
-	public List<String> getServers() {
-		return servers;
-	}
-
 	public void setServers(List<String> servers) {
 		this.servers = servers;
 	}
 
-	public List<String> getClusters() {
-		return clusters;
+	public void setVersion(String version) {
+		this.version = version;
 	}
 
-	public void setClusters(List<String> clusters) {
-		this.clusters = clusters;
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DomainInfo [");
+		if (configurationVersion != null) {
+			builder.append("configurationVersion=");
+			builder.append(configurationVersion);
+			builder.append(", ");
+		}
+		builder.append("consoleEnabled=");
+		builder.append(consoleEnabled);
+		builder.append(", ");
+		if (consolePath != null) {
+			builder.append("consolePath=");
+			builder.append(consolePath);
+			builder.append(", ");
+		}
+		if (domainVersion != null) {
+			builder.append("domainVersion=");
+			builder.append(domainVersion);
+			builder.append(", ");
+		}
+		if (lastModificationTime != null) {
+			builder.append("lastModificationTime=");
+			builder.append(lastModificationTime);
+			builder.append(", ");
+		}
+		if (name != null) {
+			builder.append("name=");
+			builder.append(name);
+			builder.append(", ");
+		}
+		builder.append("productionMode=");
+		builder.append(productionMode);
+		builder.append(", ");
+		if (servers != null) {
+			builder.append("servers=");
+			builder.append(servers);
+			builder.append(", ");
+		}
+		if (clusters != null) {
+			builder.append("clusters=");
+			builder.append(clusters);
+			builder.append(", ");
+		}
+		if (jmsServers != null) {
+			builder.append("jmsServers=");
+			builder.append(jmsServers);
+			builder.append(", ");
+		}
+		if (dataSources != null) {
+			builder.append("dataSources=");
+			builder.append(dataSources);
+			builder.append(", ");
+		}
+		if (deployments != null) {
+			builder.append("deployments=");
+			builder.append(deployments);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
-	public List<String> getJmsServers() {
-		return jmsServers;
-	}
-
-	public void setJmsServers(List<String> jmsServers) {
-		this.jmsServers = jmsServers;
-	}
-
-	public List<String> getDataSources() {
-		return dataSources;
-	}
-
-	public void setDataSources(List<String> dataSources) {
-		this.dataSources = dataSources;
-	}
-
-	public List<String> getDeployments() {
-		return deployments;
-	}
-
-	public void setDeployments(List<String> deployments) {
-		this.deployments = deployments;
-	}
-
-	
-	
-	
 }

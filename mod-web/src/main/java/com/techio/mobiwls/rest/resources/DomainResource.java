@@ -1,17 +1,24 @@
 package com.techio.mobiwls.rest.resources;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.naming.directory.NoSuchAttributeException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 import com.sun.jersey.spi.resource.Singleton;
 
@@ -19,7 +26,11 @@ import com.sun.jersey.spi.resource.Singleton;
 @Singleton
 public class DomainResource {
 
+	private CacheManager cacheManager = null;
+
 	private static final ObjectName service;
+
+	private static final String MEMORY_CACHE = "default-cache";
 
 	// Initializing the object name for DomainRuntimeServiceMBean
 	// so it can be used throughout the class.
@@ -35,6 +46,21 @@ public class DomainResource {
 	public static final String EMPTY_STRING = "";
 
 	public static final String JSON_CONTENT_TYPE = "application/json";
+
+	protected byte[] computeHash(Object object) throws NoSuchAlgorithmException {
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
+		md.update(String.valueOf(object).getBytes());
+		return md.digest();
+	}
+
+	protected String convertByteToHexString(byte[] bytes) {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < bytes.length; i++) {
+			sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16)
+					.substring(1));
+		}
+		return sb.toString();
+	}
 
 	protected MBeanServer lookupDomainRuntimeMBean() throws NamingException {
 		InitialContext ctx = new InitialContext();
@@ -66,6 +92,22 @@ public class DomainResource {
 
 	}
 
+	@PostConstruct
+	protected void initialize() {
+		cacheManager = CacheManager.getInstance();
+		Cache memoryCache = new Cache(MEMORY_CACHE, 5000, false, false, 5, 5);
+		cacheManager.addCache(memoryCache);
+		System.err.println("post construct!!!!!");
+	}
+
+	@PreDestroy
+	protected void destroy() {
+		if (cacheManager != null) {
+			cacheManager.shutdown();
+		}
+		System.err.println("pre destroy!!!!!");
+	}
+
 	protected ServerInfo retrieveServerInfo(MBeanServer mbeanServer,
 			ObjectName serverMBean) {
 		try {
@@ -79,87 +121,143 @@ public class DomainResource {
 		}
 	}
 
-	@GET
-	@Produces({ JSON_CONTENT_TYPE })
-	public DomainInfo getDomainInfo() {
-		MBeanServer domainRuntimeServer = null;
-		try {
-			domainRuntimeServer = lookupDomainRuntimeMBean();
-		} catch (NamingException ex) {
-			throw new WebApplicationException();
-		}
+	protected DomainInfo constructDomainInfo() {
 
 		try {
-			DomainInfo info = new DomainInfo();
+		MBeanServer domainRuntimeServer = null;
+
+			domainRuntimeServer = lookupDomainRuntimeMBean();
+
+		
+			DomainInfo returnValue = new DomainInfo();
 
 			ObjectName domainMBean = (ObjectName) domainRuntimeServer
 					.getAttribute(service, "DomainConfiguration");
 
-			info.setDomainVersion(String.valueOf(domainRuntimeServer
+			returnValue.setDomainVersion(String.valueOf(domainRuntimeServer
 					.getAttribute(domainMBean, "DomainVersion")));
-			info.setConfigurationVersion(String.valueOf(domainRuntimeServer
-					.getAttribute(domainMBean, "ConfigurationVersion")));
-			info.setConsoleEnabled(Boolean
+			returnValue.setConfigurationVersion(String
+					.valueOf(domainRuntimeServer.getAttribute(domainMBean,
+							"ConfigurationVersion")));
+			returnValue.setConsoleEnabled(Boolean
 					.valueOf((Boolean) domainRuntimeServer.getAttribute(
 							domainMBean, "ConsoleEnabled")));
-			info.setConsolePath(String.valueOf(domainRuntimeServer
+			returnValue.setConsolePath(String.valueOf(domainRuntimeServer
 					.getAttribute(domainMBean, "ConsoleContextPath")));
-			info.setLastModificationTime(Long
+
+			returnValue.setLastModificationTime(Long
 					.valueOf((Long) domainRuntimeServer.getAttribute(
 							domainMBean, "LastModificationTime")));
-			info.setName(String.valueOf(domainRuntimeServer.getAttribute(
-					domainMBean, "Name")));
+			returnValue.setName(String.valueOf(domainRuntimeServer
+					.getAttribute(domainMBean, "Name")));
 
 			// fetch domain server
 			ObjectName serverMBeans[] = (ObjectName[]) domainRuntimeServer
 					.getAttribute(domainMBean, "Servers");
 			for (ObjectName mbean : serverMBeans) {
-				info.getServers().add(
-						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				returnValue.getServers().add(
+						getStringAttribute(domainRuntimeServer, mbean,
+								"Name"));
 			}
 
 			// fetch domain clusters
 			ObjectName clusterMBeans[] = (ObjectName[]) domainRuntimeServer
 					.getAttribute(domainMBean, "Clusters");
 			for (ObjectName mbean : clusterMBeans) {
-				info.getClusters().add(
-						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				returnValue.getClusters().add(
+						getStringAttribute(domainRuntimeServer, mbean,
+								"Name"));
 			}
 
 			// fetch domain jms servers
 			ObjectName jmsMBeans[] = (ObjectName[]) domainRuntimeServer
 					.getAttribute(domainMBean, "JMSServers");
 			for (ObjectName mbean : jmsMBeans) {
-				info.getJmsServers().add(
-						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				returnValue.getJmsServers().add(
+						getStringAttribute(domainRuntimeServer, mbean,
+								"Name"));
 			}
 
 			// fetch domain datasources
 			ObjectName datasourceMBeans[] = (ObjectName[]) domainRuntimeServer
 					.getAttribute(domainMBean, "JDBCSystemResources");
 			for (ObjectName mbean : datasourceMBeans) {
-				info.getDataSources().add(
-						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				returnValue.getDataSources().add(
+						getStringAttribute(domainRuntimeServer, mbean,
+								"Name"));
 			}
 
 			// fetch domain datasources
 			ObjectName appDeploymentsMBeans[] = (ObjectName[]) domainRuntimeServer
 					.getAttribute(domainMBean, "AppDeployments");
 			for (ObjectName mbean : appDeploymentsMBeans) {
-				info.getDeployments().add(
-						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				returnValue.getDeployments().add(
+						getStringAttribute(domainRuntimeServer, mbean,
+								"Name"));
 			}
 
 			// fetch domain's servers
-			// ObjectName serverMBeans[] = (ObjectName[]) domainRuntimeServer
+			// ObjectName serverMBeans[] = (ObjectName[])
+			// domainRuntimeServer
 			// .getAttribute(domainMBean, "Servers");
 			// for(ObjectName serverMBean : serverMBeans) {
 			// info.addServerInfo(retrieveServerInfo(domainRuntimeServer,
 			// serverMBean));
 			// }
-			return info;
-		} catch (Exception ex) {
-			throw new WebApplicationException(ex);
+
+			/* compute the hash from the toString */
+			returnValue
+					.setVersion(convertByteToHexString(computeHash(returnValue
+							.toString())));
+			return returnValue;
+		} catch(Exception ex) {
+			throw new RuntimeException("failed to construct domainInfo instance", ex);
 		}
+		
+	
+	}
+	
+	/**
+	 * MWLS-2 : Return the domain configuration version
+	 * @return
+	 */
+	@GET
+	@Produces({ JSON_CONTENT_TYPE })
+	@Path("/version")
+	public ResourceVersion getDomainInfoVersion() {
+		DomainInfo info = getDomainInfo();
+		return new ResourceVersion(DomainInfo.class.getName(), info.getVersion());
+	}
+	
+	/**
+	 * MWLS-2 : Returns a high level view of the domain.
+	 * @return
+	 */
+	@GET
+	@Produces({ JSON_CONTENT_TYPE })
+	public DomainInfo getDomainInfo() {
+
+		/* the return value */
+		DomainInfo returnValue = null;
+
+		/* check if we have the domain info in cache */
+
+		Cache cache = cacheManager.getCache(MEMORY_CACHE);
+		Element element = cache.get(DomainInfo.CACHE_KEY);
+		if (element != null) {
+			returnValue = (DomainInfo) element.getObjectValue();
+		} else {
+			/* cache miss */
+			try {
+				returnValue = constructDomainInfo();
+
+				/* store the domain info into the cache */
+				cache.put(new Element(DomainInfo.CACHE_KEY, returnValue));
+			} catch (Exception ex) {
+				throw new WebApplicationException(ex);
+			}
+		}
+
+		return returnValue;
 	}
 }
