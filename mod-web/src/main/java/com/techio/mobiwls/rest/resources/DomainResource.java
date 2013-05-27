@@ -1,5 +1,6 @@
 package com.techio.mobiwls.rest.resources;
 
+import java.lang.reflect.Method;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -19,31 +20,39 @@ import com.sun.jersey.spi.resource.Singleton;
 @Singleton
 public class DomainResource extends BaseResource {
 
-	private static final ObjectName service;
+	private static final ObjectName domainRuntimeServiceMBeanObjectName;
 
-	
+	private static final ObjectName runtimeServiceMBeanObjectName;
+
 	// Initializing the object name for DomainRuntimeServiceMBean
 	// so it can be used throughout the class.
 	static {
 		try {
-			service = new ObjectName(
+			domainRuntimeServiceMBeanObjectName = new ObjectName(
 					"com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean");
+		} catch (MalformedObjectNameException e) {
+			throw new AssertionError(e.getMessage());
+		}
+
+		try {
+			runtimeServiceMBeanObjectName = new ObjectName(
+					"com.bea:Name=RuntimeService,Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean");
 		} catch (MalformedObjectNameException e) {
 			throw new AssertionError(e.getMessage());
 		}
 	}
 
-	
-	
-
-	protected MBeanServer lookupDomainRuntimeMBean() throws NamingException {
-		InitialContext ctx = new InitialContext();
-		return (MBeanServer) ctx.lookup("java:comp/env/jmx/domainRuntime");
+	protected MBeanServer lookupDomainRuntimeServiceMBean()
+			throws NamingException {
+		return (MBeanServer) InitialContext
+				.doLookup("java:comp/env/jmx/domainRuntime");
 	}
 
-	
+	protected MBeanServer lookupRuntimeServiceMBean() throws NamingException {
+		return (MBeanServer) InitialContext
+				.doLookup("java:comp/env/jmx/runtime");
+	}
 
-	
 	protected ServerInfo retrieveServerInfo(MBeanServer mbeanServer,
 			ObjectName serverMBean) {
 		try {
@@ -57,19 +66,64 @@ public class DomainResource extends BaseResource {
 		}
 	}
 
+	protected HealthStatusOverview constructDomainHealthOverview() {
+		try {
+			MBeanServer domainRuntimeServiceMBean = lookupDomainRuntimeServiceMBean();
+			ObjectName[] serverRuntimeMBeans = (ObjectName[]) domainRuntimeServiceMBean
+					.getAttribute(domainRuntimeServiceMBeanObjectName,
+							"ServerRuntimes");
+			HealthStatusOverview returnValue = new HealthStatusOverview();
+			/*
+			 * to avoid linking with weblogic.jar (at least for now) use
+			 * reflection to get the value of the weblogic.health.HealthState
+			 * instance
+			 */
+			@SuppressWarnings("rawtypes")
+			Class clazz = Class.forName("weblogic.health.HealthState");
+			@SuppressWarnings("unchecked")
+			Method getStateMethod = clazz.getMethod("getState");
+			for (ObjectName serverMBean : serverRuntimeMBeans) {
+				Object healthStatus = domainRuntimeServiceMBean.getAttribute(
+						serverMBean, "HealthState");
+				String serverName = getStringAttribute(
+						domainRuntimeServiceMBean, serverMBean, "Name");
+				Integer state = (Integer) getStateMethod.invoke(healthStatus);
+				switch (state.intValue()) {
+				case HealthState.HEALTH_CRITICAL:
+					returnValue.getCriticalServers().add(serverName);
+					break;
+				case HealthState.HEALTH_FAILED:
+					returnValue.getFailedServers().add(serverName);
+					break;
+				case HealthState.HEALTH_OK:
+					returnValue.getHealthyServers().add(serverName);
+					break;
+				case HealthState.HEALTH_OVERLOADED:
+					returnValue.getOverloadedServers().add(serverName);
+					break;
+				case HealthState.HEALTH_WARN:
+					returnValue.getWarningServers().add(serverName);
+					break;
+				}
+			}
+
+			return returnValue;
+
+		} catch (Exception ex) {
+			throw new RuntimeException(
+					"failed to construct health status overview instance", ex);
+		}
+	}
+
 	protected DomainInfo constructDomainInfo() {
 
 		try {
-		MBeanServer domainRuntimeServer = null;
-
-			domainRuntimeServer = lookupDomainRuntimeMBean();
-
-		
-			DomainInfo returnValue = new DomainInfo();
-
+			MBeanServer domainRuntimeServer = lookupDomainRuntimeServiceMBean();
 			ObjectName domainMBean = (ObjectName) domainRuntimeServer
-					.getAttribute(service, "DomainConfiguration");
+					.getAttribute(domainRuntimeServiceMBeanObjectName,
+							"DomainConfiguration");
 
+			DomainInfo returnValue = new DomainInfo();
 			returnValue.setDomainVersion(String.valueOf(domainRuntimeServer
 					.getAttribute(domainMBean, "DomainVersion")));
 			returnValue.setConfigurationVersion(String
@@ -92,8 +146,7 @@ public class DomainResource extends BaseResource {
 					.getAttribute(domainMBean, "Servers");
 			for (ObjectName mbean : serverMBeans) {
 				returnValue.getServers().add(
-						getStringAttribute(domainRuntimeServer, mbean,
-								"Name"));
+						getStringAttribute(domainRuntimeServer, mbean, "Name"));
 			}
 
 			// fetch domain clusters
@@ -101,8 +154,7 @@ public class DomainResource extends BaseResource {
 					.getAttribute(domainMBean, "Clusters");
 			for (ObjectName mbean : clusterMBeans) {
 				returnValue.getClusters().add(
-						getStringAttribute(domainRuntimeServer, mbean,
-								"Name"));
+						getStringAttribute(domainRuntimeServer, mbean, "Name"));
 			}
 
 			// fetch domain jms servers
@@ -110,8 +162,7 @@ public class DomainResource extends BaseResource {
 					.getAttribute(domainMBean, "JMSServers");
 			for (ObjectName mbean : jmsMBeans) {
 				returnValue.getJmsServers().add(
-						getStringAttribute(domainRuntimeServer, mbean,
-								"Name"));
+						getStringAttribute(domainRuntimeServer, mbean, "Name"));
 			}
 
 			// fetch domain datasources
@@ -119,8 +170,7 @@ public class DomainResource extends BaseResource {
 					.getAttribute(domainMBean, "JDBCSystemResources");
 			for (ObjectName mbean : datasourceMBeans) {
 				returnValue.getDataSources().add(
-						getStringAttribute(domainRuntimeServer, mbean,
-								"Name"));
+						getStringAttribute(domainRuntimeServer, mbean, "Name"));
 			}
 
 			// fetch domain datasources
@@ -128,8 +178,7 @@ public class DomainResource extends BaseResource {
 					.getAttribute(domainMBean, "AppDeployments");
 			for (ObjectName mbean : appDeploymentsMBeans) {
 				returnValue.getDeployments().add(
-						getStringAttribute(domainRuntimeServer, mbean,
-								"Name"));
+						getStringAttribute(domainRuntimeServer, mbean, "Name"));
 			}
 
 			// fetch domain's servers
@@ -146,15 +195,16 @@ public class DomainResource extends BaseResource {
 					.setVersion(convertByteToHexString(computeHash(returnValue
 							.toString())));
 			return returnValue;
-		} catch(Exception ex) {
-			throw new RuntimeException("failed to construct domainInfo instance", ex);
+		} catch (Exception ex) {
+			throw new RuntimeException(
+					"failed to construct domainInfo instance", ex);
 		}
-		
-	
+
 	}
-	
+
 	/**
 	 * MWLS-2 : Return the domain configuration version
+	 * 
 	 * @return
 	 */
 	@GET
@@ -162,11 +212,13 @@ public class DomainResource extends BaseResource {
 	@Path("/version")
 	public ResourceVersion getDomainInfoVersion() {
 		DomainInfo info = getDomainInfo();
-		return new ResourceVersion(DomainInfo.class.getName(), info.getVersion());
+		return new ResourceVersion(DomainInfo.class.getName(),
+				info.getVersion());
 	}
-	
+
 	/**
 	 * MWLS-2 : Returns a high level view of the domain.
+	 * 
 	 * @return
 	 */
 	@GET
@@ -189,6 +241,40 @@ public class DomainResource extends BaseResource {
 
 				/* store the domain info into the cache */
 				cache.put(new Element(DomainInfo.CACHE_KEY, returnValue));
+			} catch (Exception ex) {
+				throw new WebApplicationException(ex);
+			}
+		}
+
+		return returnValue;
+	}
+
+	/**
+	 * MWLS-1 : Retrieve domain health overview
+	 * 
+	 * @return
+	 */
+	@GET
+	@Produces({ JSON_CONTENT_TYPE })
+	@Path("/health")
+	public HealthStatusOverview getHealthOverview() {
+		/* the return value */
+		HealthStatusOverview returnValue = null;
+
+		/* check if we have the HealthStatusOverview in cache */
+
+		Cache cache = cacheManager.getCache(MEMORY_CACHE);
+		Element element = cache.get(HealthStatusOverview.CACHE_KEY);
+		if (element != null) {
+			returnValue = (HealthStatusOverview) element.getObjectValue();
+		} else {
+			/* cache miss */
+			try {
+				returnValue = constructDomainHealthOverview();
+
+				/* store the domain info into the cache */
+				cache.put(new Element(HealthStatusOverview.CACHE_KEY,
+						returnValue));
 			} catch (Exception ex) {
 				throw new WebApplicationException(ex);
 			}
