@@ -1,6 +1,8 @@
 package com.techio.mobiwls.rest.resources;
 
 import java.lang.reflect.Method;
+import java.util.List;
+
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -144,41 +146,56 @@ public class DomainResource extends BaseResource {
 			// fetch domain server
 			ObjectName serverMBeans[] = (ObjectName[]) domainRuntimeServer
 					.getAttribute(domainMBean, "Servers");
+			List<ServerInfo> _serversInfo = returnValue.getServers();
 			for (ObjectName mbean : serverMBeans) {
-				returnValue.getServers().add(
+				ServerInfo sinfo = new ServerInfo();
+				sinfo.setName(
 						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				_serversInfo.add(sinfo);
 			}
 
 			// fetch domain clusters
 			ObjectName clusterMBeans[] = (ObjectName[]) domainRuntimeServer
 					.getAttribute(domainMBean, "Clusters");
+			List<ClusterInfo> _clusterInfo = returnValue.getClusters();
 			for (ObjectName mbean : clusterMBeans) {
-				returnValue.getClusters().add(
+				ClusterInfo info = new ClusterInfo();
+				info.setName(
 						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				_clusterInfo.add(info);
 			}
 
 			// fetch domain jms servers
 			ObjectName jmsMBeans[] = (ObjectName[]) domainRuntimeServer
 					.getAttribute(domainMBean, "JMSServers");
+			List<JMSServerInfo> _jmsServerInfo = returnValue.getJmsServers();
 			for (ObjectName mbean : jmsMBeans) {
-				returnValue.getJmsServers().add(
+				JMSServerInfo info = new JMSServerInfo();
+				info.setName(
 						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				_jmsServerInfo.add(info);
 			}
 
 			// fetch domain datasources
 			ObjectName datasourceMBeans[] = (ObjectName[]) domainRuntimeServer
 					.getAttribute(domainMBean, "JDBCSystemResources");
+			List<JDBCResourceInfo> _jdbcResourceInfo = returnValue.getDataSources();
 			for (ObjectName mbean : datasourceMBeans) {
-				returnValue.getDataSources().add(
+				JDBCResourceInfo info = new JDBCResourceInfo();
+				info.setName(
 						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				_jdbcResourceInfo.add(info);
 			}
 
-			// fetch domain datasources
+			// fetch domain deployments
 			ObjectName appDeploymentsMBeans[] = (ObjectName[]) domainRuntimeServer
 					.getAttribute(domainMBean, "AppDeployments");
+			List<DeploymentInfo> _deploymentInfo = returnValue.getDeployments();
 			for (ObjectName mbean : appDeploymentsMBeans) {
-				returnValue.getDeployments().add(
+				DeploymentInfo info = new DeploymentInfo();
+				info.setName(
 						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				_deploymentInfo.add(info);
 			}
 
 			// fetch domain's servers
