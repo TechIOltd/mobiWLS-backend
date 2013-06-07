@@ -6,6 +6,7 @@ package com.techio.mobiwls.rest;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import com.techio.mobiwls.rest.resources.DomainResource;
@@ -14,6 +15,7 @@ import com.techio.mobiwls.rest.resources.DomainResource;
  * @author slavikos
  * 
  */
+@ApplicationPath("/*")
 public class MobiWLSApplication extends Application {
 
 	@Override
