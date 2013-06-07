@@ -23,5 +23,10 @@ public class DeploymentInfo {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return "DeploymentInfo [name=" + name + "]";
+	}
+
 		
 }

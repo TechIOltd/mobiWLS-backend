@@ -59,5 +59,12 @@ public class ServerInfo {
 	public void setPartOfCluster(String partOfCluster) {
 		this.partOfCluster = partOfCluster;
 	}
+
+	@Override
+	public String toString() {
+		return "ServerInfo [listenPort=" + listenPort + ", name=" + name
+				+ ", listenAddress=" + listenAddress + ", partOfCluster="
+				+ partOfCluster + "]";
+	}
 	
 }

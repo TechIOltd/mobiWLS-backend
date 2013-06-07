@@ -23,6 +23,11 @@ public class JMSServerInfo {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return "JMSServerInfo [name=" + name + "]";
+	}
+
 	
 	
 }

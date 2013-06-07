@@ -23,6 +23,11 @@ public class JDBCResourceInfo {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return "JDBCResourceInfo [name=" + name + "]";
+	}
+
 	
 	
 }
