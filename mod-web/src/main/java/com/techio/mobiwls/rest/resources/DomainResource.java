@@ -4,10 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -22,52 +19,7 @@ import com.sun.jersey.spi.resource.Singleton;
 @Singleton
 public class DomainResource extends BaseResource {
 
-	private static final ObjectName domainRuntimeServiceMBeanObjectName;
-
-	private static final ObjectName runtimeServiceMBeanObjectName;
-
-	// Initializing the object name for DomainRuntimeServiceMBean
-	// so it can be used throughout the class.
-	static {
-		try {
-			domainRuntimeServiceMBeanObjectName = new ObjectName(
-					"com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean");
-		} catch (MalformedObjectNameException e) {
-			throw new AssertionError(e.getMessage());
-		}
-
-		try {
-			runtimeServiceMBeanObjectName = new ObjectName(
-					"com.bea:Name=RuntimeService,Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean");
-		} catch (MalformedObjectNameException e) {
-			throw new AssertionError(e.getMessage());
-		}
-	}
-
-	protected MBeanServer lookupDomainRuntimeServiceMBean()
-			throws NamingException {
-		return (MBeanServer) InitialContext
-				.doLookup("java:comp/env/jmx/domainRuntime");
-	}
-
-	protected MBeanServer lookupRuntimeServiceMBean() throws NamingException {
-		return (MBeanServer) InitialContext
-				.doLookup("java:comp/env/jmx/runtime");
-	}
-
-	protected ServerInfo retrieveServerInfo(MBeanServer mbeanServer,
-			ObjectName serverMBean) {
-		try {
-			ServerInfo info = new ServerInfo();
-			info.setListenAddress(getStringAttribute(mbeanServer, serverMBean,
-					"ListenAddress"));
-			info.setName(getStringAttribute(mbeanServer, serverMBean, "Name"));
-			return info;
-		} catch (Exception ex) {
-			throw new RuntimeException("failed to construct server info", ex);
-		}
-	}
-
+	
 	protected HealthStatusOverview constructDomainHealthOverview() {
 		try {
 			MBeanServer domainRuntimeServiceMBean = lookupDomainRuntimeServiceMBean();
@@ -118,7 +70,6 @@ public class DomainResource extends BaseResource {
 	}
 
 	protected DomainInfo constructDomainInfo() {
-
 		try {
 			MBeanServer domainRuntimeServer = lookupDomainRuntimeServiceMBean();
 			ObjectName domainMBean = (ObjectName) domainRuntimeServer
@@ -220,20 +171,6 @@ public class DomainResource extends BaseResource {
 	}
 
 	/**
-	 * MWLS-2 : Return the domain configuration version
-	 * 
-	 * @return
-	 */
-	@GET
-	@Produces({ JSON_CONTENT_TYPE })
-	@Path("/version")
-	public ResourceVersion getDomainInfoVersion() {
-		DomainInfo info = getDomainInfo();
-		return new ResourceVersion(DomainInfo.class.getName(),
-				info.getVersion());
-	}
-
-	/**
 	 * MWLS-2 : Returns a high level view of the domain.
 	 * 
 	 * @return
@@ -264,6 +201,20 @@ public class DomainResource extends BaseResource {
 		}
 
 		return returnValue;
+	}
+
+	/**
+	 * MWLS-2 : Return the domain configuration version
+	 * 
+	 * @return
+	 */
+	@GET
+	@Produces({ JSON_CONTENT_TYPE })
+	@Path("/version")
+	public ResourceVersion getDomainInfoVersion() {
+		DomainInfo info = getDomainInfo();
+		return new ResourceVersion(DomainInfo.class.getName(),
+				info.getVersion());
 	}
 
 	/**
@@ -298,5 +249,18 @@ public class DomainResource extends BaseResource {
 		}
 
 		return returnValue;
+	}
+
+	protected ServerInfo retrieveServerInfo(MBeanServer mbeanServer,
+			ObjectName serverMBean) {
+		try {
+			ServerInfo info = new ServerInfo();
+			info.setListenAddress(getStringAttribute(mbeanServer, serverMBean,
+					"ListenAddress"));
+			info.setName(getStringAttribute(mbeanServer, serverMBean, "Name"));
+			return info;
+		} catch (Exception ex) {
+			throw new RuntimeException("failed to construct server info", ex);
+		}
 	}
 }

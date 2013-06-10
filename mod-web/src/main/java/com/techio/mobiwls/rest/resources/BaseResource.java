@@ -10,13 +10,16 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
 /**
- * @author slavikos
+ * @author Filip Slavik (filip@techio.com)
  *
  */
 public class BaseResource {
@@ -28,6 +31,11 @@ public class BaseResource {
 	protected static final String MEMORY_CACHE = "default-cache";
 
 	protected CacheManager cacheManager = null;
+
+	protected ObjectName domainRuntimeServiceMBeanObjectName;
+
+	protected ObjectName runtimeServiceMBeanObjectName;
+	
 	
 	protected byte[] computeHash(Object object) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -43,6 +51,7 @@ public class BaseResource {
 		}
 		return sb.toString();
 	}
+	
 	@PreDestroy
 	protected void destroy() {
 		if (cacheManager != null) {
@@ -64,7 +73,6 @@ public class BaseResource {
 		}
 
 	}
-	
 	protected String getStringAttribute(MBeanServer mbeanServer,
 			ObjectName objectName, String attributeName) {
 		Object attribute = getAttribute(mbeanServer, objectName, attributeName);
@@ -77,10 +85,40 @@ public class BaseResource {
 
 	@PostConstruct
 	protected void initialize() {
+		
+		try {
+			domainRuntimeServiceMBeanObjectName = new ObjectName(
+					"com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean");
+		} catch (MalformedObjectNameException e) {
+			throw new RuntimeException("failed to resolve DomainRuntimeService", e);
+		}
+
+		try {
+			runtimeServiceMBeanObjectName = new ObjectName(
+					"com.bea:Name=RuntimeService,Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean");
+		} catch (MalformedObjectNameException e) {
+			throw new RuntimeException("failed to resolve RuntimeService", e);
+		}
+		
+		
 		cacheManager = CacheManager.getInstance();
-		Cache memoryCache = new Cache(MEMORY_CACHE, 5000, false, false, 5, 5);
-		cacheManager.addCache(memoryCache);
+		/* add the memory cache if it does not yet exist */
+		if(!cacheManager.cacheExists(MEMORY_CACHE)) {
+			Cache memoryCache = new Cache(MEMORY_CACHE, 5000, false, false, 5, 5);
+			cacheManager.addCache(memoryCache);
+		}
 		System.err.println("post construct!!!!!");
+	}
+	
+	protected MBeanServer lookupDomainRuntimeServiceMBean()
+			throws NamingException {
+		return (MBeanServer) InitialContext
+				.doLookup("java:comp/env/jmx/domainRuntime");
+	}
+
+	protected MBeanServer lookupRuntimeServiceMBean() throws NamingException {
+		return (MBeanServer) InitialContext
+				.doLookup("java:comp/env/jmx/runtime");
 	}
 
 }
