@@ -27,6 +27,19 @@ public class ServerInfo {
 	 * The name of the cluster this server belongs to (if targeted to a cluster)
 	 */
 	private String partOfCluster;
+	
+	/**
+	 * runtime information related to this server
+	 */
+	private ServerRuntimeInfo runtimeInfo;
+
+	public ServerRuntimeInfo getRuntimeInfo() {
+		return runtimeInfo;
+	}
+
+	public void setRuntimeInfo(ServerRuntimeInfo runtimeInfo) {
+		this.runtimeInfo = runtimeInfo;
+	}
 
 	public Integer getListenPort() {
 		return listenPort;
