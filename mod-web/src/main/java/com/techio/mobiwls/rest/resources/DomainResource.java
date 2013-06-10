@@ -99,10 +99,7 @@ public class DomainResource extends BaseResource {
 					.getAttribute(domainMBean, "Servers");
 			List<ServerInfo> _serversInfo = returnValue.getServers();
 			for (ObjectName mbean : serverMBeans) {
-				ServerInfo sinfo = new ServerInfo();
-				sinfo.setName(
-						getStringAttribute(domainRuntimeServer, mbean, "Name"));
-				_serversInfo.add(sinfo);
+				_serversInfo.add(constructMinimalServerInfo(domainRuntimeServer, mbean));
 			}
 
 			// fetch domain clusters

@@ -36,11 +36,28 @@ public class BaseResource {
 
 	protected ObjectName runtimeServiceMBeanObjectName;
 	
-	
 	protected byte[] computeHash(Object object) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		md.update(String.valueOf(object).getBytes());
 		return md.digest();
+	}
+	
+	/**
+	 * Constructs and returns an instance of {@link ServerInfo} with the bare minimum info
+	 * filled.
+	 * 
+	 * @see BaseResource#lookupDomainRuntimeServiceMBean()
+	 * 
+	 * @param domainRuntimeServer The domain's domainRutimeServer
+	 * @param serverMBean The WLS server mbean
+	 * @return A minimalistics instance of {@link ServerInfo}
+	 */
+	protected ServerInfo constructMinimalServerInfo(
+			MBeanServer domainRuntimeServer, ObjectName serverMBean) {
+		ServerInfo sinfo = new ServerInfo();
+		sinfo.setName(getStringAttribute(domainRuntimeServer, serverMBean,
+				"Name"));
+		return sinfo;
 	}
 
 	protected String convertByteToHexString(byte[] bytes) {

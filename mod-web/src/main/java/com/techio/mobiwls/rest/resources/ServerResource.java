@@ -23,6 +23,8 @@ import com.sun.jersey.spi.resource.Singleton;
 @Singleton
 public class ServerResource extends BaseResource {
 
+	
+
 	@GET
 	@Produces({ JSON_CONTENT_TYPE })
 	public List<ServerInfo> getServerNames() {
@@ -39,10 +41,8 @@ public class ServerResource extends BaseResource {
 					.getAttribute(domainMBean, "Servers");
 
 			for (ObjectName mbean : serverMBeans) {
-				ServerInfo sinfo = new ServerInfo();
-				sinfo.setName(getStringAttribute(domainRuntimeServer, mbean,
-						"Name"));
-				_serversInfo.add(sinfo);
+				_serversInfo.add(constructMinimalServerInfo(
+						domainRuntimeServer, mbean));
 			}
 			return _serversInfo;
 		} catch (Exception ex) {
