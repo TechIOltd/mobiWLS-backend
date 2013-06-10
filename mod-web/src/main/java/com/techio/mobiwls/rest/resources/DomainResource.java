@@ -228,6 +228,7 @@ public class DomainResource extends BaseResource {
 	@Produces({ JSON_CONTENT_TYPE })
 	@Path("/version")
 	public ResourceVersion getDomainInfoVersion() {
+		error line
 		DomainInfo info = getDomainInfo();
 		return new ResourceVersion(DomainInfo.class.getName(),
 				info.getVersion());
