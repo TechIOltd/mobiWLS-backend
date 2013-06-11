@@ -142,6 +142,19 @@ public class ServerThreadPoolRuntimeInfo {
 	}
 
 
+	@Override
+	public String toString() {
+		return "ServerThreadPoolRuntimeInfo [completedRequestCount="
+				+ completedRequestCount + ", executeThreadIdleCount="
+				+ executeThreadIdleCount + ", executeThreadTotalCount="
+				+ executeThreadTotalCount + ", hoggingThreadCount="
+				+ hoggingThreadCount + ", pendingUserRequestCount="
+				+ pendingUserRequestCount + ", queueLength=" + queueLength
+				+ ", standbyThreadCount=" + standbyThreadCount
+				+ ", throughput=" + throughput + "]";
+	}
+
+
 	
 
 	

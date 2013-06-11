@@ -15,6 +15,8 @@ import javax.management.ObjectName;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import com.techio.mobiwls.jmx.ServerMBeanWrapper;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
@@ -48,15 +50,12 @@ public class BaseResource {
 	 * 
 	 * @see BaseResource#lookupDomainRuntimeServiceMBean()
 	 * 
-	 * @param domainRuntimeServer The domain's domainRutimeServer
 	 * @param serverMBean The WLS server mbean
 	 * @return A minimalistics instance of {@link ServerInfo}
 	 */
-	protected ServerInfo constructMinimalServerInfo(
-			MBeanServer domainRuntimeServer, ObjectName serverMBean) {
+	protected ServerInfo constructMinimalServerInfo(ServerMBeanWrapper serverMBean) {
 		ServerInfo sinfo = new ServerInfo();
-		sinfo.setName(getStringAttribute(domainRuntimeServer, serverMBean,
-				"Name"));
+		sinfo.setName(serverMBean.getName());
 		return sinfo;
 	}
 

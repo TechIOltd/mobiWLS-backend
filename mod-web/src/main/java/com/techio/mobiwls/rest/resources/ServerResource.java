@@ -20,6 +20,7 @@ import javax.ws.rs.WebApplicationException;
 
 import com.sun.jersey.spi.resource.Singleton;
 import com.techio.mobiwls.jmx.DomainRuntimeServiceMBeanWrapper;
+import com.techio.mobiwls.jmx.ServerMBeanWrapper;
 import com.techio.mobiwls.jmx.ServerRuntimeMBeanWrapper;
 import com.techio.mobiwls.jmx.ThreadPoolRuntimeWrapper;
 import com.techio.mobiwls.rest.NotFoundException;
@@ -46,12 +47,11 @@ public class ServerResource extends BaseResource implements TimerListener {
 	
 	@Override
 	public void timerExpired(Timer timer) {
-		
-		
-		
 		List<ServerInfo> servers = getServerNames();
 		for(ServerInfo serverInfo : servers) {
-			
+			System.err.println(String.format("quering '%s'", serverInfo.getName()));
+			ServerThreadPoolRuntimeInfo _info = getThreadPoolRuntimeInfo(serverInfo.getName());
+			System.err.println(_info);
 		}
 		
 	}
@@ -173,20 +173,10 @@ public class ServerResource extends BaseResource implements TimerListener {
 	@Produces({ JSON_CONTENT_TYPE })
 	public List<ServerInfo> getServerNames() {
 		List<ServerInfo> _serversInfo = new ArrayList<ServerInfo>();
-
 		try {
-			MBeanServer domainRuntimeServer = lookupDomainRuntimeServiceMBean();
-			ObjectName domainMBean = (ObjectName) domainRuntimeServer
-					.getAttribute(domainRuntimeServiceMBeanObjectName,
-							"DomainConfiguration");
-
-			// fetch domain server
-			ObjectName serverMBeans[] = (ObjectName[]) domainRuntimeServer
-					.getAttribute(domainMBean, "Servers");
-
-			for (ObjectName mbean : serverMBeans) {
-				_serversInfo.add(constructMinimalServerInfo(
-						domainRuntimeServer, mbean));
+			List<ServerMBeanWrapper> serverMBeans = domainRuntime.getDomainConfiguration().getServers();
+			for (ServerMBeanWrapper mbean : serverMBeans) {
+				_serversInfo.add(constructMinimalServerInfo(mbean));
 			}
 			return _serversInfo;
 		} catch (Exception ex) {

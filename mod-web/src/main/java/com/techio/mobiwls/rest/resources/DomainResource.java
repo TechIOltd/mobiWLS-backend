@@ -3,6 +3,8 @@ package com.techio.mobiwls.rest.resources;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.ws.rs.GET;
@@ -14,12 +16,20 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import com.sun.jersey.spi.resource.Singleton;
+import com.techio.mobiwls.jmx.AppDeploymentMBeanWrapper;
+import com.techio.mobiwls.jmx.ClusterMBeanWrapper;
+import com.techio.mobiwls.jmx.DomainMBeanWrapper;
+import com.techio.mobiwls.jmx.DomainRuntimeServiceMBeanWrapper;
+import com.techio.mobiwls.jmx.JDBCSystemResourceMBeanWrapper;
+import com.techio.mobiwls.jmx.JMSServerMBeanWrapper;
+import com.techio.mobiwls.jmx.ServerMBeanWrapper;
 
 @Path("/domain")
 @Singleton
 public class DomainResource extends BaseResource {
 
-	
+	protected DomainRuntimeServiceMBeanWrapper domainRuntime;
+
 	protected HealthStatusOverview constructDomainHealthOverview() {
 		try {
 			MBeanServer domainRuntimeServiceMBean = lookupDomainRuntimeServiceMBean();
@@ -71,90 +81,63 @@ public class DomainResource extends BaseResource {
 
 	protected DomainInfo constructDomainInfo() {
 		try {
-			MBeanServer domainRuntimeServer = lookupDomainRuntimeServiceMBean();
-			ObjectName domainMBean = (ObjectName) domainRuntimeServer
-					.getAttribute(domainRuntimeServiceMBeanObjectName,
-							"DomainConfiguration");
-
+			
+			DomainMBeanWrapper _domainMBean = domainRuntime.getDomainConfiguration();
+			
 			DomainInfo returnValue = new DomainInfo();
-			returnValue.setDomainVersion(String.valueOf(domainRuntimeServer
-					.getAttribute(domainMBean, "DomainVersion")));
-			returnValue.setConfigurationVersion(String
-					.valueOf(domainRuntimeServer.getAttribute(domainMBean,
-							"ConfigurationVersion")));
-			returnValue.setConsoleEnabled(Boolean
-					.valueOf((Boolean) domainRuntimeServer.getAttribute(
-							domainMBean, "ConsoleEnabled")));
-			returnValue.setConsolePath(String.valueOf(domainRuntimeServer
-					.getAttribute(domainMBean, "ConsoleContextPath")));
+			returnValue.setDomainVersion(_domainMBean.getDomainVersion());
+			returnValue.setConfigurationVersion(_domainMBean.getConfigurationVersion());
+			returnValue.setConsoleEnabled(_domainMBean.isConsoleEnabled());
+			returnValue.setConsolePath(_domainMBean.getConsoleContextPath());
 
-			returnValue.setLastModificationTime(Long
-					.valueOf((Long) domainRuntimeServer.getAttribute(
-							domainMBean, "LastModificationTime")));
-			returnValue.setName(String.valueOf(domainRuntimeServer
-					.getAttribute(domainMBean, "Name")));
+			returnValue.setLastModificationTime(_domainMBean.getLastModificationTime());
+			returnValue.setName(_domainMBean.getName());
 
 			// fetch domain server
-			ObjectName serverMBeans[] = (ObjectName[]) domainRuntimeServer
-					.getAttribute(domainMBean, "Servers");
+			List<ServerMBeanWrapper> serverMBeans = _domainMBean.getServers();
 			List<ServerInfo> _serversInfo = returnValue.getServers();
-			for (ObjectName mbean : serverMBeans) {
-				_serversInfo.add(constructMinimalServerInfo(domainRuntimeServer, mbean));
+			for (ServerMBeanWrapper mbean : serverMBeans) {
+				_serversInfo.add(constructMinimalServerInfo(mbean));
 			}
 
 			// fetch domain clusters
-			ObjectName clusterMBeans[] = (ObjectName[]) domainRuntimeServer
-					.getAttribute(domainMBean, "Clusters");
+			List<ClusterMBeanWrapper> clusterMBeans = _domainMBean.getClusters();
 			List<ClusterInfo> _clusterInfo = returnValue.getClusters();
-			for (ObjectName mbean : clusterMBeans) {
+			for (ClusterMBeanWrapper mbean : clusterMBeans) {
 				ClusterInfo info = new ClusterInfo();
-				info.setName(
-						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				info.setName(mbean.getName());
 				_clusterInfo.add(info);
 			}
 
 			// fetch domain jms servers
-			ObjectName jmsMBeans[] = (ObjectName[]) domainRuntimeServer
-					.getAttribute(domainMBean, "JMSServers");
+			List<JMSServerMBeanWrapper> jmsMBeans = _domainMBean.getJMSServers();
 			List<JMSServerInfo> _jmsServerInfo = returnValue.getJmsServers();
-			for (ObjectName mbean : jmsMBeans) {
+			for (JMSServerMBeanWrapper mbean : jmsMBeans) {
 				JMSServerInfo info = new JMSServerInfo();
-				info.setName(
-						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				info.setName(mbean.getName());
 				_jmsServerInfo.add(info);
 			}
 
 			// fetch domain datasources
-			ObjectName datasourceMBeans[] = (ObjectName[]) domainRuntimeServer
-					.getAttribute(domainMBean, "JDBCSystemResources");
-			List<JDBCResourceInfo> _jdbcResourceInfo = returnValue.getDataSources();
-			for (ObjectName mbean : datasourceMBeans) {
+			List<JDBCSystemResourceMBeanWrapper> datasourceMBeans = _domainMBean.getJDBCSystemResources();
+			List<JDBCResourceInfo> _jdbcResourceInfo = returnValue
+					.getDataSources();
+			for (JDBCSystemResourceMBeanWrapper mbean : datasourceMBeans) {
 				JDBCResourceInfo info = new JDBCResourceInfo();
-				info.setName(
-						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				info.setName(mbean.getName());
 				_jdbcResourceInfo.add(info);
 			}
 
 			// fetch domain deployments
-			ObjectName appDeploymentsMBeans[] = (ObjectName[]) domainRuntimeServer
-					.getAttribute(domainMBean, "AppDeployments");
+			List<AppDeploymentMBeanWrapper> appDeploymentsMBeans = _domainMBean.getAppDeployments();
 			List<DeploymentInfo> _deploymentInfo = returnValue.getDeployments();
-			for (ObjectName mbean : appDeploymentsMBeans) {
+			for (AppDeploymentMBeanWrapper mbean : appDeploymentsMBeans) {
 				DeploymentInfo info = new DeploymentInfo();
-				info.setName(
-						getStringAttribute(domainRuntimeServer, mbean, "Name"));
+				info.setName(mbean.getName());
 				_deploymentInfo.add(info);
 			}
 
-			// fetch domain's servers
-			// ObjectName serverMBeans[] = (ObjectName[])
-			// domainRuntimeServer
-			// .getAttribute(domainMBean, "Servers");
-			// for(ObjectName serverMBean : serverMBeans) {
-			// info.addServerInfo(retrieveServerInfo(domainRuntimeServer,
-			// serverMBean));
-			// }
-
+			
 			/* compute the hash from the toString */
 			returnValue
 					.setVersion(convertByteToHexString(computeHash(returnValue
@@ -165,6 +148,12 @@ public class DomainResource extends BaseResource {
 					"failed to construct domainInfo instance", ex);
 		}
 
+	}
+
+	@Override
+	@PreDestroy
+	protected void destroy() {
+		super.destroy();
 	}
 
 	/**
@@ -214,6 +203,7 @@ public class DomainResource extends BaseResource {
 				info.getVersion());
 	}
 
+
 	/**
 	 * MWLS-1 : Retrieve domain health overview
 	 * 
@@ -248,16 +238,16 @@ public class DomainResource extends BaseResource {
 		return returnValue;
 	}
 
-	protected ServerInfo retrieveServerInfo(MBeanServer mbeanServer,
-			ObjectName serverMBean) {
+	@Override
+	@PostConstruct
+	protected void initialize() {
+		super.initialize();
 		try {
-			ServerInfo info = new ServerInfo();
-			info.setListenAddress(getStringAttribute(mbeanServer, serverMBean,
-					"ListenAddress"));
-			info.setName(getStringAttribute(mbeanServer, serverMBean, "Name"));
-			return info;
+			domainRuntime = new DomainRuntimeServiceMBeanWrapper(
+					lookupDomainRuntimeServiceMBean(),
+					domainRuntimeServiceMBeanObjectName);
 		} catch (Exception ex) {
-			throw new RuntimeException("failed to construct server info", ex);
+			throw new RuntimeException(ex);
 		}
 	}
 }
