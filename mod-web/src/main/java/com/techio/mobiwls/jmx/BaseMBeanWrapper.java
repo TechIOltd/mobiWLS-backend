@@ -41,4 +41,12 @@ public abstract class BaseMBeanWrapper {
 		return JMXUtils.getStringAttribute(mbeanServer, mbean,
 				attribute);
 	}
+
+	protected Object getAttribute(String attribute) {
+		return JMXUtils.getAttribute(mbeanServer, mbean,
+				attribute);
+	}
+	protected MBeanServer getMbeanServer() {
+		return mbeanServer;
+	}
 }

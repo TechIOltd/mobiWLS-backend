@@ -21,6 +21,7 @@ import javax.ws.rs.WebApplicationException;
 import com.sun.jersey.spi.resource.Singleton;
 import com.techio.mobiwls.jmx.DomainRuntimeServiceMBeanWrapper;
 import com.techio.mobiwls.jmx.ServerRuntimeMBeanWrapper;
+import com.techio.mobiwls.jmx.ThreadPoolRuntimeWrapper;
 import com.techio.mobiwls.rest.NotFoundException;
 
 import commonj.timers.Timer;
@@ -76,6 +77,21 @@ public class ServerResource extends BaseResource implements TimerListener {
 		
 		return serverInfo;
 	}
+	
+	protected ServerThreadPoolRuntimeInfo constructServerThreadPoolRuntimeInfo(ThreadPoolRuntimeWrapper threadpoolRuntime) {
+		ServerThreadPoolRuntimeInfo runtimeInfo = new ServerThreadPoolRuntimeInfo();
+		
+		runtimeInfo.setCompletedRequestCount(threadpoolRuntime.getCompletedRequestCount());
+		runtimeInfo.setExecuteThreadIdleCount(threadpoolRuntime.getExecuteThreadIdleCount());
+		runtimeInfo.setExecuteThreadTotalCount(threadpoolRuntime.getExecuteThreadTotalCount());
+		runtimeInfo.setHoggingThreadCount(threadpoolRuntime.getHoggingThreadCount());
+		runtimeInfo.setPendingUserRequestCount(threadpoolRuntime.getPendingUserRequestCount());
+		runtimeInfo.setQueueLength(threadpoolRuntime.getQueueLength());
+		runtimeInfo.setStandbyThreadCount(threadpoolRuntime.getStandbyThreadCount());
+		runtimeInfo.setThroughput(threadpoolRuntime.getThroughput());
+		
+		return runtimeInfo;
+	}
 
 	@Override
 	@PostConstruct
@@ -116,6 +132,22 @@ public class ServerResource extends BaseResource implements TimerListener {
 			throw new WebApplicationException(ex);
 		}
 		
+	}
+	
+	@GET
+	@Produces({ JSON_CONTENT_TYPE })
+	@Path("/{serverName}/threadpool")
+	public ServerThreadPoolRuntimeInfo getThreadPoolRuntimeInfo(@PathParam("serverName") String serverName) {
+		try {
+			ServerRuntimeMBeanWrapper serverRuntime = domainRuntime.getServerRuntime(serverName);
+			if(serverRuntime != null) {
+				return constructServerThreadPoolRuntimeInfo(serverRuntime.getThreadPoolRuntime());
+			} else {
+				throw new NotFoundException();
+			}
+		} catch(Exception ex) {
+			throw new WebApplicationException(ex);
+		}
 	}
 
 	@Override

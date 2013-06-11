@@ -61,5 +61,10 @@ public class ServerRuntimeMBeanWrapper extends BaseMBeanWrapper {
 	public Boolean isRestartRequired() {
 		return getBooleanAttribute("RestartRequired");
 	}
+	
+	public ThreadPoolRuntimeWrapper getThreadPoolRuntime() {
+		return new ThreadPoolRuntimeWrapper(getMbeanServer(), (ObjectName)getAttribute("ThreadPoolRuntime"));
+	}
+	
 
 }
