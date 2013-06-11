@@ -45,6 +45,15 @@ public class DomainMBeanWrapper extends BaseMBeanWrapper {
 		return _result;
 	}
 	
+	public ServerMBeanWrapper getServers(String serverName) {
+		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(mbeanServer, mbean, "Servers");
+		for (ObjectName mbean : serverMBeans) {
+			if(JMXUtils.getStringAttribute(mbeanServer, mbean, "Name").equals(serverName)) {
+				return new ServerMBeanWrapper(mbeanServer, mbean);
+			} else continue;
+		}
+		return null;
+	}
 	
 	public List<ClusterMBeanWrapper> getClusters() {
 		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(mbeanServer, mbean, "Clusters");

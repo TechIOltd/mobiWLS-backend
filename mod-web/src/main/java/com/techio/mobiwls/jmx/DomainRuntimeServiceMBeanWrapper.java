@@ -32,6 +32,11 @@ public class DomainRuntimeServiceMBeanWrapper {
 		} else return null;
 	}
 
+	/**
+	 * @todo we need to use an operation rather than querying the mbeans
+	 * @param serverName
+	 * @return
+	 */
 	public ServerRuntimeMBeanWrapper getServerRuntime(String serverName) {
 		try {
 			ObjectName[] mbeans = getServerRuntimeMBeans();
@@ -50,6 +55,9 @@ public class DomainRuntimeServiceMBeanWrapper {
 		}
 		return null;
 	}
+	
+	
+	
 
 	protected ObjectName[] getServerRuntimeMBeans() {
 		try {

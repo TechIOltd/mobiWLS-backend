@@ -39,11 +39,6 @@ public class ServerResource extends BaseResource implements TimerListener {
 	
 	protected DomainRuntimeServiceMBeanWrapper domainRuntime;
 	
-	protected ObjectName[] getDomainServerRuntimes() throws Exception {
-		MBeanServer runtimeServiceBean = lookupRuntimeServiceMBean();
-		runtimeServiceBean.getAttribute(runtimeServiceMBeanObjectName, "ServerRuntimes");
-		return null;
-	}
 	
 	@Override
 	public void timerExpired(Timer timer) {
@@ -59,9 +54,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 	private Timer analyticsTimer = null;
 	
 	
-	protected ServerInfo constructDetailedServerInfo(ServerRuntimeMBeanWrapper serverRuntime) {
-		ServerInfo serverInfo = new ServerInfo();
-		serverInfo.setName(serverRuntime.getName());
+	protected ServerRuntimeInfo constructServerRuntimeInfo(ServerRuntimeMBeanWrapper serverRuntime) {
 		
 		/* server runtime info */
 		ServerRuntimeInfo runtimeInfo = new ServerRuntimeInfo();
@@ -73,9 +66,8 @@ public class ServerResource extends BaseResource implements TimerListener {
 		runtimeInfo.setServerClasspath(serverRuntime.getServerClasspath());
 		runtimeInfo.setState(serverRuntime.getState());
 		runtimeInfo.setWeblogicVersion(serverRuntime.getWeblogicVersion());
-		serverInfo.setRuntimeInfo(runtimeInfo);
 		
-		return serverInfo;
+		return runtimeInfo;
 	}
 	
 	protected ServerThreadPoolRuntimeInfo constructServerThreadPoolRuntimeInfo(ThreadPoolRuntimeWrapper threadpoolRuntime) {
@@ -113,21 +105,18 @@ public class ServerResource extends BaseResource implements TimerListener {
 	@Produces({ JSON_CONTENT_TYPE })
 	@Path("/{serverName}")
 	public ServerInfo getServerInfo(@PathParam("serverName") String serverName) {
+		ServerInfo returnValue = null;
 		try {
-			MBeanServer domainRuntimeServer = lookupDomainRuntimeServiceMBean();
-			ObjectName domainMBean = (ObjectName) domainRuntimeServer
-					.getAttribute(domainRuntimeServiceMBeanObjectName,
-							"DomainConfiguration");
-			ObjectName serverMBeans[] = (ObjectName[]) domainRuntimeServer
-					.getAttribute(domainMBean, "Servers");
-			
+			ServerMBeanWrapper serverMBean = domainRuntime.getDomainConfiguration().getServers(serverName);
+			if(serverMBean!=null) {
+				returnValue = constructMinimalServerInfo(serverMBean);
+			} 
 			
 			ServerRuntimeMBeanWrapper serverRuntime = domainRuntime.getServerRuntime(serverName);
 			if(serverRuntime != null) {
-				return constructDetailedServerInfo(serverRuntime);
-			} else {
-				throw new NotFoundException();
-			}
+				returnValue.setRuntimeInfo(constructServerRuntimeInfo(serverRuntime));
+			} 
+			return returnValue;
 		} catch (Exception ex) {
 			throw new WebApplicationException(ex);
 		}
@@ -158,16 +147,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 		super.destroy();
 	}
 
-	protected ObjectName searchObjectNameWithName(MBeanServer server, ObjectName[] objectNames,
-			String name) {
-		for (ObjectName mbean : objectNames) {
-			if (getStringAttribute(server, mbean, "Name").equals(name)) {
-				return mbean;
-			} else
-				continue;
-		}
-		return null;
-	}
+	
 
 	@GET
 	@Produces({ JSON_CONTENT_TYPE })
