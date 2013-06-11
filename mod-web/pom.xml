@@ -48,6 +48,14 @@
 			<artifactId>jersey-bundle</artifactId>
 			<version>1.17.1</version>
 		</dependency>
+		
+		<!-- commonj api -->
+		<dependency>
+        	<groupId>org.apache.geronimo.specs</groupId>
+        	<artifactId>geronimo-commonj_1.1_spec</artifactId>
+        	<version>1.0</version>
+        	<scope>provided</scope>
+      	</dependency>
 
 		<dependency>
 			<groupId>javax</groupId>
