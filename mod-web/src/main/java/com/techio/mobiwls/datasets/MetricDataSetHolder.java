@@ -11,7 +11,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @author slavikos
  * 
  */
-public class MetricDataSet {
+public class MetricDataSetHolder {
 	
 	private ArrayBlockingQueue<MetricSample> samples;
 	
@@ -37,7 +37,7 @@ public class MetricDataSet {
 	/**
 	 * 
 	 */
-	public MetricDataSet(String id, String title, String description,
+	public MetricDataSetHolder(String id, String title, String description,
 			Integer setCapacity) {
 		super();
 		MetricDataSetInfo _info = new MetricDataSetInfo();

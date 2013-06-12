@@ -23,7 +23,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 
 import com.sun.jersey.spi.resource.Singleton;
-import com.techio.mobiwls.datasets.MetricDataSet;
+import com.techio.mobiwls.datasets.MetricDataSetHolder;
 import com.techio.mobiwls.datasets.MetricDataSetInfo;
 import com.techio.mobiwls.datasets.MetricSample;
 import com.techio.mobiwls.jmx.DomainRuntimeServiceMBeanWrapper;
@@ -47,40 +47,40 @@ public class ServerResource extends BaseResource implements TimerListener {
 
 	public static class ServerMetrics {
 
-		protected Map<String, MetricDataSet> metricIndex = new HashMap<String, MetricDataSet>();
+		protected Map<String, MetricDataSetHolder> metricIndex = new HashMap<String, MetricDataSetHolder>();
 		/**
 		 * The number of completed requests in the priority queue
 		 */
-		private MetricDataSet completedRequest;
+		private MetricDataSetHolder completedRequest;
 
 		/**
 		 * The mean number of requests completed per second.
 		 */
-		private MetricDataSet throughput;
+		private MetricDataSetHolder throughput;
 
 		protected ServerMetrics() {
 			super();
-			completedRequest = new MetricDataSet("ServerCompletedRequest", "Completed Request",
+			completedRequest = new MetricDataSetHolder("ServerCompletedRequest", "Completed Request",
 					"The number of completed requests in the priority queue",
 					10);
 			
 			metricIndex.put(completedRequest.getInfo().getId(), completedRequest);
-			throughput = new MetricDataSet("ServerThroughput", "Server Throughput",
+			throughput = new MetricDataSetHolder("ServerThroughput", "Server Throughput",
 					"The mean number of requests completed per second", 10);
 			
 			metricIndex.put(throughput.getInfo().getId(), throughput);
 
 		}
 		
-		public MetricDataSet getMetricById(String metricId) {
+		public MetricDataSetHolder getMetricById(String metricId) {
 			return metricIndex.get(metricId);
 		}
 
-		public MetricDataSet getCompletedRequest() {
+		public MetricDataSetHolder getCompletedRequest() {
 			return completedRequest;
 		}
 
-		public MetricDataSet getThroughput() {
+		public MetricDataSetHolder getThroughput() {
 			return throughput;
 		}
 	}
@@ -165,7 +165,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 	@GET
 	@Produces({ JSON_CONTENT_TYPE })
 	@Path("/{serverName}/metric/{metricId}")
-	public MetricDataSet getServerMetrics(
+	public MetricDataSetHolder getServerMetrics(
 			@PathParam("serverName") String serverName, @PathParam("metricId")String metricId) {
 
 		ServerMetrics serverMetrics = serverMetricSet.get(serverName);
@@ -174,7 +174,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 					"No metrics found for server '%s'", serverName));
 		}
 		
-		MetricDataSet metric = serverMetrics.getMetricById(metricId);
+		MetricDataSetHolder metric = serverMetrics.getMetricById(metricId);
 		if(metric == null) {
 			throw new NotFoundException(String.format(
 					"Metric '%s' not found for server '%s'", metricId, serverName));
