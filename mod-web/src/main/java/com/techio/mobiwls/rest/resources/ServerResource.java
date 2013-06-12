@@ -23,6 +23,7 @@ import com.techio.mobiwls.jmx.DomainRuntimeServiceMBeanWrapper;
 import com.techio.mobiwls.jmx.ServerMBeanWrapper;
 import com.techio.mobiwls.jmx.ServerRuntimeMBeanWrapper;
 import com.techio.mobiwls.jmx.ThreadPoolRuntimeWrapper;
+import com.techio.mobiwls.rest.NoRuntimeAvailableException;
 import com.techio.mobiwls.rest.NotFoundException;
 
 import commonj.timers.Timer;
@@ -45,8 +46,11 @@ public class ServerResource extends BaseResource implements TimerListener {
 		List<ServerInfo> servers = getServerNames();
 		for(ServerInfo serverInfo : servers) {
 			System.err.println(String.format("quering '%s'", serverInfo.getName()));
+			ServerRuntimeMBeanWrapper serverRuntime = domainRuntime.getServerRuntime(serverInfo.getName());
+			if(serverRuntime != null) {
 			ServerThreadPoolRuntimeInfo _info = getThreadPoolRuntimeInfo(serverInfo.getName());
 			System.err.println(_info);
+			}
 		}
 		
 	}
@@ -105,13 +109,12 @@ public class ServerResource extends BaseResource implements TimerListener {
 	@Produces({ JSON_CONTENT_TYPE })
 	@Path("/{serverName}")
 	public ServerInfo getServerInfo(@PathParam("serverName") String serverName) {
-		ServerInfo returnValue = null;
+		ServerMBeanWrapper serverMBean =  domainRuntime.getDomainConfiguration().getServers(serverName);
+		if(serverMBean==null) {
+			throw new NotFoundException();
+		}
 		try {
-			ServerMBeanWrapper serverMBean = domainRuntime.getDomainConfiguration().getServers(serverName);
-			if(serverMBean!=null) {
-				returnValue = constructMinimalServerInfo(serverMBean);
-			} 
-			
+			ServerInfo returnValue = constructMinimalServerInfo(serverMBean);
 			ServerRuntimeMBeanWrapper serverRuntime = domainRuntime.getServerRuntime(serverName);
 			if(serverRuntime != null) {
 				returnValue.setRuntimeInfo(constructServerRuntimeInfo(serverRuntime));
@@ -127,13 +130,12 @@ public class ServerResource extends BaseResource implements TimerListener {
 	@Produces({ JSON_CONTENT_TYPE })
 	@Path("/{serverName}/threadpool")
 	public ServerThreadPoolRuntimeInfo getThreadPoolRuntimeInfo(@PathParam("serverName") String serverName) {
+		ServerRuntimeMBeanWrapper serverRuntime = domainRuntime.getServerRuntime(serverName);
+		if(serverRuntime == null) {
+			throw new NoRuntimeAvailableException(String.format("No server runtime for server '%s' available.", serverName));
+		}
 		try {
-			ServerRuntimeMBeanWrapper serverRuntime = domainRuntime.getServerRuntime(serverName);
-			if(serverRuntime != null) {
-				return constructServerThreadPoolRuntimeInfo(serverRuntime.getThreadPoolRuntime());
-			} else {
-				throw new NotFoundException();
-			}
+			return constructServerThreadPoolRuntimeInfo(serverRuntime.getThreadPoolRuntime());
 		} catch(Exception ex) {
 			throw new WebApplicationException(ex);
 		}
