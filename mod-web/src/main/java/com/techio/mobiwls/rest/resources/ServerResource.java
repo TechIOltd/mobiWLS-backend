@@ -24,6 +24,7 @@ import javax.ws.rs.WebApplicationException;
 
 import com.sun.jersey.spi.resource.Singleton;
 import com.techio.mobiwls.datasets.MetricDataSet;
+import com.techio.mobiwls.datasets.MetricDataSetInfo;
 import com.techio.mobiwls.datasets.MetricSample;
 import com.techio.mobiwls.jmx.DomainRuntimeServiceMBeanWrapper;
 import com.techio.mobiwls.jmx.ServerMBeanWrapper;
@@ -63,11 +64,11 @@ public class ServerResource extends BaseResource implements TimerListener {
 					"The number of completed requests in the priority queue",
 					10);
 			
-			metricIndex.put(completedRequest.getId(), completedRequest);
+			metricIndex.put(completedRequest.getInfo().getId(), completedRequest);
 			throughput = new MetricDataSet("ServerThroughput", "Server Throughput",
 					"The mean number of requests completed per second", 10);
 			
-			metricIndex.put(throughput.getId(), throughput);
+			metricIndex.put(throughput.getInfo().getId(), throughput);
 
 		}
 		
@@ -141,7 +142,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 	@GET
 	@Produces({ JSON_CONTENT_TYPE })
 	@Path("/{serverName}/metric")
-	public List<MetricDataSet> getServerAvailableMetrics(
+	public List<MetricDataSetInfo> getServerAvailableMetrics(
 			@PathParam("serverName") String serverName) {
 
 		ServerMetrics serverMetrics = serverMetricSet.get(serverName);
@@ -150,9 +151,9 @@ public class ServerResource extends BaseResource implements TimerListener {
 					"No metrics found for server '%s'", serverName));
 		}
 		try {
-			List<MetricDataSet> returnValue = new ArrayList<MetricDataSet>();
-			returnValue.add(serverMetrics.completedRequest);
-			returnValue.add(serverMetrics.throughput);
+			List<MetricDataSetInfo> returnValue = new ArrayList<MetricDataSetInfo>();
+			returnValue.add(serverMetrics.completedRequest.getInfo());
+			returnValue.add(serverMetrics.throughput.getInfo());
 
 			return returnValue;
 
