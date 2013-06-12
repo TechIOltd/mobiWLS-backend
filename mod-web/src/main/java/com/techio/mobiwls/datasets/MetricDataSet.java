@@ -19,9 +19,9 @@ public class MetricDataSet {
 	/**
 	 * 
 	 */
-	public MetricDataSet(String title, String description, Integer setCapacity) {
+	public MetricDataSet(String id, String title, String description, Integer setCapacity) {
 		super();
-		this.id = UUID.randomUUID().toString();
+		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.samples = new ArrayBlockingQueue<MetricSample>(setCapacity);

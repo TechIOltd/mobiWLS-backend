@@ -59,12 +59,12 @@ public class ServerResource extends BaseResource implements TimerListener {
 
 		protected ServerMetrics() {
 			super();
-			completedRequest = new MetricDataSet("ServerCompletedRequest",
+			completedRequest = new MetricDataSet("ServerCompletedRequest", "Completed Request",
 					"The number of completed requests in the priority queue",
 					10);
 			
 			metricIndex.put(completedRequest.getId(), completedRequest);
-			throughput = new MetricDataSet("ServerThroughput",
+			throughput = new MetricDataSet("ServerThroughput", "Server Throughput",
 					"The mean number of requests completed per second", 10);
 			
 			metricIndex.put(throughput.getId(), throughput);
