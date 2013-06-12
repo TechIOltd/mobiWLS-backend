@@ -30,8 +30,13 @@ public class MetricDataSet {
 private ArrayBlockingQueue<MetricSample> samples;
 	
 	private Date youngestEntry = null;
-	public MetricDataSet() {
-		
+	
+	private MetricDataSet() {
+		super();
+	}
+	public MetricDataSet(int capacity) {
+		this();
+		samples = new ArrayBlockingQueue<MetricSample>(capacity);
 	}
 	
 	public void addSample(MetricSample sample) {
@@ -50,8 +55,8 @@ private ArrayBlockingQueue<MetricSample> samples;
 
 	
 
-	public ArrayBlockingQueue<MetricSample> getSamples() {
-		return samples;
+	public Integer getEntriesCount() {
+		return samples != null ? samples.size() : 0;
 	}
 
 
@@ -61,12 +66,12 @@ private ArrayBlockingQueue<MetricSample> samples;
 		return oldestEntry != null ? oldestEntry.getSampledOn() : null;
 	}
 
-	public Date getYoungestEntry() {
-		return youngestEntry;
+	public ArrayBlockingQueue<MetricSample> getSamples() {
+		return samples;
 	}
 
-	public Integer getEntriesCount() {
-		return samples != null ? samples.size() : 0;
+	public Date getYoungestEntry() {
+		return youngestEntry;
 	}
 
 }

@@ -38,6 +38,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 
 import com.sun.jersey.spi.resource.Singleton;
+import com.techio.mobiwls.datasets.MetricDataSet;
 import com.techio.mobiwls.datasets.MetricDataSetHolder;
 import com.techio.mobiwls.datasets.MetricDataSetInfo;
 import com.techio.mobiwls.datasets.MetricSample;
@@ -180,7 +181,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 	@GET
 	@Produces({ JSON_CONTENT_TYPE })
 	@Path("/{serverName}/metric/{metricId}")
-	public MetricDataSetHolder getServerMetrics(
+	public MetricDataSet getServerMetrics(
 			@PathParam("serverName") String serverName, @PathParam("metricId")String metricId) {
 
 		ServerMetrics serverMetrics = serverMetricSet.get(serverName);
@@ -194,7 +195,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 			throw new NotFoundException(String.format(
 					"Metric '%s' not found for server '%s'", metricId, serverName));
 		}
-		return metric;
+		return metric.getDataset();
 		
 	}
 
