@@ -23,13 +23,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.management.MBeanServer;
-import javax.management.MBeanServerInvocationHandler;
-import javax.management.ObjectName;
 import javax.naming.InitialContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -63,11 +58,11 @@ public class ServerResource extends BaseResource implements TimerListener {
 
 	public static class ServerMetrics {
 
-		protected Map<String, MetricDataSetHolder> metricIndex = new HashMap<String, MetricDataSetHolder>();
 		/**
 		 * The number of completed requests in the priority queue
 		 */
 		private MetricDataSetHolder completedRequest;
+		protected Map<String, MetricDataSetHolder> metricIndex = new HashMap<String, MetricDataSetHolder>();
 
 		/**
 		 * The mean number of requests completed per second.
@@ -88,12 +83,12 @@ public class ServerResource extends BaseResource implements TimerListener {
 
 		}
 		
-		public MetricDataSetHolder getMetricById(String metricId) {
-			return metricIndex.get(metricId);
-		}
-
 		public MetricDataSetHolder getCompletedRequest() {
 			return completedRequest;
+		}
+
+		public MetricDataSetHolder getMetricById(String metricId) {
+			return metricIndex.get(metricId);
 		}
 
 		public MetricDataSetHolder getThroughput() {
@@ -180,27 +175,6 @@ public class ServerResource extends BaseResource implements TimerListener {
 	
 	@GET
 	@Produces({ JSON_CONTENT_TYPE })
-	@Path("/{serverName}/metric/{metricId}")
-	public MetricDataSet getServerMetrics(
-			@PathParam("serverName") String serverName, @PathParam("metricId")String metricId) {
-
-		ServerMetrics serverMetrics = serverMetricSet.get(serverName);
-		if (serverMetrics == null) {
-			throw new NotFoundException(String.format(
-					"No metrics found for server '%s'", serverName));
-		}
-		
-		MetricDataSetHolder metric = serverMetrics.getMetricById(metricId);
-		if(metric == null) {
-			throw new NotFoundException(String.format(
-					"Metric '%s' not found for server '%s'", metricId, serverName));
-		}
-		return metric.getDataset();
-		
-	}
-
-	@GET
-	@Produces({ JSON_CONTENT_TYPE })
 	@Path("/{serverName}")
 	public ServerInfo getServerInfo(@PathParam("serverName") String serverName) {
 		ServerMBeanWrapper serverMBean = domainRuntime.getDomainConfiguration()
@@ -221,6 +195,27 @@ public class ServerResource extends BaseResource implements TimerListener {
 			throw new WebApplicationException(ex);
 		}
 
+	}
+
+	@GET
+	@Produces({ JSON_CONTENT_TYPE })
+	@Path("/{serverName}/metric/{metricId}")
+	public MetricDataSet getServerMetrics(
+			@PathParam("serverName") String serverName, @PathParam("metricId")String metricId) {
+
+		ServerMetrics serverMetrics = serverMetricSet.get(serverName);
+		if (serverMetrics == null) {
+			throw new NotFoundException(String.format(
+					"No metrics found for server '%s'", serverName));
+		}
+		
+		MetricDataSetHolder metric = serverMetrics.getMetricById(metricId);
+		if(metric == null) {
+			throw new NotFoundException(String.format(
+					"Metric '%s' not found for server '%s'", metricId, serverName));
+		}
+		return metric.getDataset();
+		
 	}
 
 	@GET
@@ -273,8 +268,8 @@ public class ServerResource extends BaseResource implements TimerListener {
 			InitialContext inctxt = new InitialContext();
 			TimerManager mgr = (TimerManager) inctxt
 					.lookup("java:comp/env/tm/default");
-			analyticsTimer = mgr.scheduleAtFixedRate(this, (long) 0,
-					(long) 10000);
+			analyticsTimer = mgr.scheduleAtFixedRate(this, 0,
+					10000);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}

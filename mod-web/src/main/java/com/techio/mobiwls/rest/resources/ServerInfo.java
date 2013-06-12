@@ -24,6 +24,11 @@ package com.techio.mobiwls.rest.resources;
  */
 public class ServerInfo {
 	/**
+	 * The IP address or DNS name this server uses to listen for incoming connections.
+	 */
+	private String listenAddress;
+	
+	/**
 	 * The default TCP port that this server uses to listen for regular (non-SSL) incoming connections.
 	 */
 	private Integer listenPort;
@@ -32,11 +37,6 @@ public class ServerInfo {
 	 * An alphanumeric name for this server instance. (Spaces are not valid.)
 	 */
 	private String name;
-	
-	/**
-	 * The IP address or DNS name this server uses to listen for incoming connections.
-	 */
-	private String listenAddress;
 	
 	/**
 	 * The name of the cluster this server belongs to (if targeted to a cluster)
@@ -48,44 +48,44 @@ public class ServerInfo {
 	 */
 	private ServerRuntimeInfo runtimeInfo;
 
-	public ServerRuntimeInfo getRuntimeInfo() {
-		return runtimeInfo;
-	}
-
-	public void setRuntimeInfo(ServerRuntimeInfo runtimeInfo) {
-		this.runtimeInfo = runtimeInfo;
+	public String getListenAddress() {
+		return listenAddress;
 	}
 
 	public Integer getListenPort() {
 		return listenPort;
 	}
 
-	public void setListenPort(Integer listenPort) {
-		this.listenPort = listenPort;
-	}
-
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getListenAddress() {
-		return listenAddress;
-	}
-
-	public void setListenAddress(String listenAddress) {
-		this.listenAddress = listenAddress;
 	}
 
 	public String getPartOfCluster() {
 		return partOfCluster;
 	}
 
+	public ServerRuntimeInfo getRuntimeInfo() {
+		return runtimeInfo;
+	}
+
+	public void setListenAddress(String listenAddress) {
+		this.listenAddress = listenAddress;
+	}
+
+	public void setListenPort(Integer listenPort) {
+		this.listenPort = listenPort;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public void setPartOfCluster(String partOfCluster) {
 		this.partOfCluster = partOfCluster;
+	}
+
+	public void setRuntimeInfo(ServerRuntimeInfo runtimeInfo) {
+		this.runtimeInfo = runtimeInfo;
 	}
 
 	@Override

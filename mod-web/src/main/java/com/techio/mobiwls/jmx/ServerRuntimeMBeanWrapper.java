@@ -54,6 +54,10 @@ public class ServerRuntimeMBeanWrapper extends BaseMBeanWrapper {
 
 	
 
+	public String getName() {
+		return getStringAttribute("Name");
+	}
+
 	public Integer getOpenSocketsCurrentCount() {
 		return getIntegerAttribute("OpenSocketsCurrentCount");
 	}
@@ -61,27 +65,23 @@ public class ServerRuntimeMBeanWrapper extends BaseMBeanWrapper {
 	public String getServerClasspath() {
 		return getStringAttribute("ServerClasspath");
 	}
-
+	
 	public String getState() {
 		return getStringAttribute("State");
 	}
-	
-	public String getName() {
-		return getStringAttribute("Name");
-	}
 
 	
+
+	public ThreadPoolRuntimeWrapper getThreadPoolRuntime() {
+		return new ThreadPoolRuntimeWrapper(getMbeanServer(), (ObjectName)getAttribute("ThreadPoolRuntime"));
+	}
 
 	public String getWeblogicVersion() {
 		return getStringAttribute("WeblogicVersion");
 	}
-
+	
 	public Boolean isRestartRequired() {
 		return getBooleanAttribute("RestartRequired");
-	}
-	
-	public ThreadPoolRuntimeWrapper getThreadPoolRuntime() {
-		return new ThreadPoolRuntimeWrapper(getMbeanServer(), (ObjectName)getAttribute("ThreadPoolRuntime"));
 	}
 	
 

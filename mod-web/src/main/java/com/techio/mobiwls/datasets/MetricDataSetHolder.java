@@ -25,9 +25,9 @@ package com.techio.mobiwls.datasets;
  */
 public class MetricDataSetHolder {
 
-	private MetricDataSetInfo info = null;
-
 	private MetricDataSet dataset = null;
+
+	private MetricDataSetInfo info = null;
 
 	/**
 	 * 
@@ -43,19 +43,19 @@ public class MetricDataSetHolder {
 		this.dataset = new MetricDataSet(setCapacity);
 	}
 
-	public MetricDataSetInfo getInfo() {
-		return info;
+	public void addSample(MetricSample sample) {
+		dataset.addSample(sample);
 	}
 
 	public MetricDataSet getDataset() {
 		return dataset;
 	}
 
-	public void setDataset(MetricDataSet dataset) {
-		this.dataset = dataset;
+	public MetricDataSetInfo getInfo() {
+		return info;
 	}
 
-	public void addSample(MetricSample sample) {
-		dataset.addSample(sample);
+	public void setDataset(MetricDataSet dataset) {
+		this.dataset = dataset;
 	}
 }

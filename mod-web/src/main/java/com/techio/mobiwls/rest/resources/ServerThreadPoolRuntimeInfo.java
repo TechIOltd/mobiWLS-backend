@@ -79,18 +79,8 @@ public class ServerThreadPoolRuntimeInfo {
 	}
 
 
-	public void setCompletedRequestCount(Long completedRequestCount) {
-		this.completedRequestCount = completedRequestCount;
-	}
-
-
 	public Integer getExecuteThreadIdleCount() {
 		return executeThreadIdleCount;
-	}
-
-
-	public void setExecuteThreadIdleCount(Integer executeThreadIdleCount) {
-		this.executeThreadIdleCount = executeThreadIdleCount;
 	}
 
 
@@ -99,18 +89,8 @@ public class ServerThreadPoolRuntimeInfo {
 	}
 
 
-	public void setExecuteThreadTotalCount(Integer executeThreadTotalCount) {
-		this.executeThreadTotalCount = executeThreadTotalCount;
-	}
-
-
 	public Integer getHoggingThreadCount() {
 		return hoggingThreadCount;
-	}
-
-
-	public void setHoggingThreadCount(Integer hoggingThreadCount) {
-		this.hoggingThreadCount = hoggingThreadCount;
 	}
 
 
@@ -119,18 +99,8 @@ public class ServerThreadPoolRuntimeInfo {
 	}
 
 
-	public void setPendingUserRequestCount(Integer pendingUserRequestCount) {
-		this.pendingUserRequestCount = pendingUserRequestCount;
-	}
-
-
 	public Integer getQueueLength() {
 		return queueLength;
-	}
-
-
-	public void setQueueLength(Integer queueLength) {
-		this.queueLength = queueLength;
 	}
 
 
@@ -139,13 +109,43 @@ public class ServerThreadPoolRuntimeInfo {
 	}
 
 
-	public void setStandbyThreadCount(Integer standbyThreadCount) {
-		this.standbyThreadCount = standbyThreadCount;
+	public Double getThroughput() {
+		return throughput;
 	}
 
 
-	public Double getThroughput() {
-		return throughput;
+	public void setCompletedRequestCount(Long completedRequestCount) {
+		this.completedRequestCount = completedRequestCount;
+	}
+
+
+	public void setExecuteThreadIdleCount(Integer executeThreadIdleCount) {
+		this.executeThreadIdleCount = executeThreadIdleCount;
+	}
+
+
+	public void setExecuteThreadTotalCount(Integer executeThreadTotalCount) {
+		this.executeThreadTotalCount = executeThreadTotalCount;
+	}
+
+
+	public void setHoggingThreadCount(Integer hoggingThreadCount) {
+		this.hoggingThreadCount = hoggingThreadCount;
+	}
+
+
+	public void setPendingUserRequestCount(Integer pendingUserRequestCount) {
+		this.pendingUserRequestCount = pendingUserRequestCount;
+	}
+
+
+	public void setQueueLength(Integer queueLength) {
+		this.queueLength = queueLength;
+	}
+
+
+	public void setStandbyThreadCount(Integer standbyThreadCount) {
+		this.standbyThreadCount = standbyThreadCount;
 	}
 
 
