@@ -36,6 +36,7 @@ import com.sun.jersey.spi.resource.Singleton;
 import com.techio.mobiwls.datasets.MetricDataSet;
 import com.techio.mobiwls.datasets.MetricDataSetHolder;
 import com.techio.mobiwls.datasets.MetricDataSetInfo;
+import com.techio.mobiwls.datasets.MetricDataSetType;
 import com.techio.mobiwls.datasets.MetricSample;
 import com.techio.mobiwls.jmx.DomainRuntimeServiceMBeanWrapper;
 import com.techio.mobiwls.jmx.ServerMBeanWrapper;
@@ -72,12 +73,12 @@ public class ServerResource extends BaseResource implements TimerListener {
 		protected ServerMetrics() {
 			super();
 			completedRequest = new MetricDataSetHolder("ServerCompletedRequest", "Completed Request",
-					"The number of completed requests in the priority queue", "Time", "Completed Request / 5 min",
+					"The number of completed requests in the priority queue", "Time", "Completed Request / 5 min", MetricDataSetType.COUNTER_TYPE,
 					100);
 			
 			metricIndex.put(completedRequest.getInfo().getId(), completedRequest);
 			throughput = new MetricDataSetHolder("ServerThroughput", "Server Throughput",
-					"The mean number of requests completed per second", "Time", "Throughput", 100);
+					"The mean number of requests completed per second", "Time", "Throughput",MetricDataSetType.GAUGE_TYPE, 100);
 			
 			metricIndex.put(throughput.getInfo().getId(), throughput);
 

@@ -25,6 +25,21 @@ package com.techio.mobiwls.datasets;
 public class MetricDataSetInfo {
 	
 	/**
+	 * axis X title
+	 */
+	private String axisXTitle;
+	
+	/**
+	 * axis Y title
+	 */
+	private String axisYTitle;
+	
+	/**
+	 * dataset type, for example counter or gauge
+	 */
+	private MetricDataSetType dataSetType = MetricDataSetType.GAUGE_TYPE;
+	
+	/**
 	 * Metric dataset description.
 	 */
 	private String description;
@@ -38,16 +53,18 @@ public class MetricDataSetInfo {
 	 * Metric dataset title
 	 */
 	private String title;
-	
-	/**
-	 * axis X title
-	 */
-	private String axisXTitle;
-	
-	/**
-	 * axis Y title
-	 */
-	private String axisYTitle;
+
+	public String getAxisXTitle() {
+		return axisXTitle;
+	}
+
+	public String getAxisYTitle() {
+		return axisYTitle;
+	}
+
+	public MetricDataSetType getDataSetType() {
+		return dataSetType;
+	}
 
 	public String getDescription() {
 		return description;
@@ -61,6 +78,18 @@ public class MetricDataSetInfo {
 		return title;
 	}
 
+	public void setAxisXTitle(String axisXTitle) {
+		this.axisXTitle = axisXTitle;
+	}
+
+	public void setAxisYTitle(String axisYTitle) {
+		this.axisYTitle = axisYTitle;
+	}
+
+	public void setDataSetType(MetricDataSetType dataSetType) {
+		this.dataSetType = dataSetType;
+	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -71,21 +100,5 @@ public class MetricDataSetInfo {
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	public String getAxisXTitle() {
-		return axisXTitle;
-	}
-
-	public void setAxisXTitle(String axisXTitle) {
-		this.axisXTitle = axisXTitle;
-	}
-
-	public String getAxisYTitle() {
-		return axisYTitle;
-	}
-
-	public void setAxisYTitle(String axisYTitle) {
-		this.axisYTitle = axisYTitle;
 	}
 }
