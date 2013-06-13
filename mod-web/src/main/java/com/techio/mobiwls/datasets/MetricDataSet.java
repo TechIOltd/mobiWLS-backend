@@ -31,12 +31,23 @@ private ArrayBlockingQueue<MetricSample> samples;
 	
 	private Date youngestEntry = null;
 	
+	/**
+	 * dataset type, for example counter or gauge
+	 */
+	private MetricDataSetType dataSetType = MetricDataSetType.GAUGE_TYPE;
+	
 	private MetricDataSet() {
 		super();
 	}
+	
 	public MetricDataSet(int capacity) {
 		this();
 		samples = new ArrayBlockingQueue<MetricSample>(capacity);
+	}
+	
+	public MetricDataSet(int capacity, MetricDataSetType dataSetType) {
+		this(capacity);
+		this.dataSetType = dataSetType;
 	}
 	
 	public void addSample(MetricSample sample) {
@@ -72,6 +83,10 @@ private ArrayBlockingQueue<MetricSample> samples;
 
 	public Date getYoungestEntry() {
 		return youngestEntry;
+	}
+
+	public MetricDataSetType getDataSetType() {
+		return dataSetType;
 	}
 
 }
