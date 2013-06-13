@@ -38,6 +38,16 @@ public class MetricDataSetInfo {
 	 * Metric dataset title
 	 */
 	private String title;
+	
+	/**
+	 * axis X title
+	 */
+	private String axisXTitle;
+	
+	/**
+	 * axis Y title
+	 */
+	private String axisYTitle;
 
 	public String getDescription() {
 		return description;
@@ -61,5 +71,21 @@ public class MetricDataSetInfo {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getAxisXTitle() {
+		return axisXTitle;
+	}
+
+	public void setAxisXTitle(String axisXTitle) {
+		this.axisXTitle = axisXTitle;
+	}
+
+	public String getAxisYTitle() {
+		return axisYTitle;
+	}
+
+	public void setAxisYTitle(String axisYTitle) {
+		this.axisYTitle = axisYTitle;
 	}
 }
