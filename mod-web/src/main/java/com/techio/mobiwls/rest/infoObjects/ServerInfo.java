@@ -20,29 +20,31 @@ package com.techio.mobiwls.rest.infoObjects;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public class ServerInfo {
 	/**
-	 * The IP address or DNS name this server uses to listen for incoming connections.
+	 * The IP address or DNS name this server uses to listen for incoming
+	 * connections.
 	 */
 	private String listenAddress;
-	
+
 	/**
-	 * The default TCP port that this server uses to listen for regular (non-SSL) incoming connections.
+	 * The default TCP port that this server uses to listen for regular
+	 * (non-SSL) incoming connections.
 	 */
 	private Integer listenPort;
-	
+
 	/**
 	 * An alphanumeric name for this server instance. (Spaces are not valid.)
 	 */
 	private String name;
-	
+
 	/**
 	 * The name of the cluster this server belongs to (if targeted to a cluster)
 	 */
 	private String partOfCluster;
-	
+
 	/**
 	 * runtime information related to this server
 	 */
@@ -94,5 +96,5 @@ public class ServerInfo {
 				+ ", listenAddress=" + listenAddress + ", partOfCluster="
 				+ partOfCluster + "]";
 	}
-	
+
 }

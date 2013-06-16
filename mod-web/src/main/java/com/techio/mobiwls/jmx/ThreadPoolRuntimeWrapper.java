@@ -103,12 +103,12 @@ public class ThreadPoolRuntimeWrapper extends BaseMBeanWrapper {
 	public Integer getStandbyThreadCount() {
 		return getIntegerAttribute("StandbyThreadCount");
 	}
-	
+
 	/**
 	 * The mean number of requests completed per second.
 	 */
 	public Double getThroughput() {
-		return (Double)getAttribute("Throughput");
+		return (Double) getAttribute("Throughput");
 	}
 
 }

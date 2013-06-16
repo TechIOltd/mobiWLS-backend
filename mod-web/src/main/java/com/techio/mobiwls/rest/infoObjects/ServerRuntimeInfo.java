@@ -20,23 +20,23 @@ package com.techio.mobiwls.rest.infoObjects;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public class ServerRuntimeInfo {
 	public Long activationTime;
-	
+
 	public String currentDirectory;
-	
+
 	public String currentMachine;
-	
+
 	public Integer openSocketsCurrentCount;
-	
+
 	public Boolean restartRequired;
-	
+
 	public String serverClasspath;
-	
+
 	public String state;
-	
+
 	public String weblogicVersion;
 
 	public Long getActivationTime() {

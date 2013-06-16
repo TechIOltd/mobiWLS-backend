@@ -23,35 +23,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HealthStatusOverview implements Serializable {
-	
+
 	public static final String CACHE_KEY = "HealthStatusOverview";
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
 
 	/**
 	 * List of servers in critical state.
 	 */
 	public List<String> criticalServers = new ArrayList<String>();
-	
+
 	/**
 	 * List of failed servers.
 	 */
 	public List<String> failedServers = new ArrayList<String>();
-	
+
 	/**
 	 * List of healthy servers.
 	 */
 	public List<String> healthyServers = new ArrayList<String>();
-	
+
 	/**
 	 * List of overloaded servers.
 	 */
 	public List<String> overloadedServers = new ArrayList<String>();
-	
+
 	/**
 	 * List of servers in warning state.
 	 */
@@ -96,6 +95,5 @@ public class HealthStatusOverview implements Serializable {
 	public void setWarningServers(List<String> warningServers) {
 		this.warningServers = warningServers;
 	}
-	
-	
+
 }

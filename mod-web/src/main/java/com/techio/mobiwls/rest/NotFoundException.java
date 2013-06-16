@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response.Status;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public class NotFoundException extends AbstractGenericRestException {
 
@@ -33,7 +33,5 @@ public class NotFoundException extends AbstractGenericRestException {
 	public NotFoundException(String message) {
 		super(message, Status.NOT_FOUND);
 	}
-
-	
 
 }

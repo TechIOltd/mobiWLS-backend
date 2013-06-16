@@ -21,13 +21,12 @@ package com.techio.mobiwls.rest.infoObjects;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
  * 
  */
 public class DomainInfo {
-	
+
 	public static final String CACHE_KEY = "DomainInfo";
 
 	private List<ClusterInfo> clusters = new ArrayList<ClusterInfo>();
@@ -47,10 +46,9 @@ public class DomainInfo {
 	 * The context path that you want to use in URLs that specify the
 	 * Administration Console
 	 */
-	private String consolePath
-	;
+	private String consolePath;
 	private List<JDBCResourceInfo> dataSources = new ArrayList<JDBCResourceInfo>();
-	
+
 	private List<DeploymentInfo> deployments = new ArrayList<DeploymentInfo>();
 	/**
 	 * Defines the common version of all servers in a domain. In a domain
@@ -97,145 +95,97 @@ public class DomainInfo {
 		return consolePath;
 	}
 
-
-
 	public List<JDBCResourceInfo> getDataSources() {
 		return dataSources;
 	}
-
-
 
 	public List<DeploymentInfo> getDeployments() {
 		return deployments;
 	}
 
-
-
 	public String getDomainVersion() {
 		return domainVersion;
 	}
-
-
 
 	public List<JMSServerInfo> getJmsServers() {
 		return jmsServers;
 	}
 
-
-
 	public Long getLastModificationTime() {
 		return lastModificationTime;
 	}
-
-
 
 	public String getName() {
 		return name;
 	}
 
-
-
 	public List<ServerInfo> getServers() {
 		return servers;
 	}
-
-
 
 	public String getVersion() {
 		return version;
 	}
 
-
-
 	public boolean isConsoleEnabled() {
 		return consoleEnabled;
 	}
-
-
 
 	public boolean isProductionMode() {
 		return productionMode;
 	}
 
-
-
 	public void setClusters(List<ClusterInfo> clusters) {
 		this.clusters = clusters;
 	}
-
-
 
 	public void setConfigurationVersion(String configurationVersion) {
 		this.configurationVersion = configurationVersion;
 	}
 
-
-
 	public void setConsoleEnabled(boolean consoleEnabled) {
 		this.consoleEnabled = consoleEnabled;
 	}
-
-
 
 	public void setConsolePath(String consolePath) {
 		this.consolePath = consolePath;
 	}
 
-
-
 	public void setDataSources(List<JDBCResourceInfo> dataSources) {
 		this.dataSources = dataSources;
 	}
-
-
 
 	public void setDeployments(List<DeploymentInfo> deployments) {
 		this.deployments = deployments;
 	}
 
-
-
 	public void setDomainVersion(String domainVersion) {
 		this.domainVersion = domainVersion;
 	}
-
-
 
 	public void setJmsServers(List<JMSServerInfo> jmsServers) {
 		this.jmsServers = jmsServers;
 	}
 
-
-
 	public void setLastModificationTime(Long lastModificationTime) {
 		this.lastModificationTime = lastModificationTime;
 	}
-
-
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-
-
 	public void setProductionMode(boolean productionMode) {
 		this.productionMode = productionMode;
 	}
-
-
 
 	public void setServers(List<ServerInfo> servers) {
 		this.servers = servers;
 	}
 
-
-
 	public void setVersion(String version) {
 		this.version = version;
 	}
-
-
 
 	@Override
 	public String toString() {

@@ -25,7 +25,7 @@ import javax.ws.rs.core.Response.Status;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public abstract class AbstractGenericRestException extends
 		WebApplicationException {
@@ -34,7 +34,6 @@ public abstract class AbstractGenericRestException extends
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
 
 	protected AbstractGenericRestException() {
 		this(Status.INTERNAL_SERVER_ERROR);
@@ -43,9 +42,10 @@ public abstract class AbstractGenericRestException extends
 	protected AbstractGenericRestException(Status status) {
 		super(status);
 	}
-	
+
 	protected AbstractGenericRestException(String message, Status status) {
-		super(Response.status(status).entity(message).type(MediaType.TEXT_PLAIN).build());
+		super(Response.status(status).entity(message)
+				.type(MediaType.TEXT_PLAIN).build());
 	}
 
 }

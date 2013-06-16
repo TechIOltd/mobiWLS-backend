@@ -23,26 +23,15 @@ import javax.management.ObjectName;
 
 public class ServerRuntimeMBeanWrapper extends BaseMBeanWrapper {
 
-	
-
-	
-
-
-	
-
 	protected ServerRuntimeMBeanWrapper(MBeanServer mbeanServer,
 			ObjectName mbean) {
 		super(mbeanServer, mbean);
 		// TODO Auto-generated constructor stub
 	}
 
-
-
 	public Long getActivationTime() {
 		return getLongAttribute("ActivationTime");
 	}
-
-	
 
 	public String getCurrentDirectory() {
 		return getStringAttribute("CurrentDirectory");
@@ -51,8 +40,6 @@ public class ServerRuntimeMBeanWrapper extends BaseMBeanWrapper {
 	public String getCurrentMachine() {
 		return getStringAttribute("CurrentMachine");
 	}
-
-	
 
 	public String getName() {
 		return getStringAttribute("Name");
@@ -65,24 +52,22 @@ public class ServerRuntimeMBeanWrapper extends BaseMBeanWrapper {
 	public String getServerClasspath() {
 		return getStringAttribute("ServerClasspath");
 	}
-	
+
 	public String getState() {
 		return getStringAttribute("State");
 	}
 
-	
-
 	public ThreadPoolRuntimeWrapper getThreadPoolRuntime() {
-		return new ThreadPoolRuntimeWrapper(getMbeanServer(), (ObjectName)getAttribute("ThreadPoolRuntime"));
+		return new ThreadPoolRuntimeWrapper(getMbeanServer(),
+				(ObjectName) getAttribute("ThreadPoolRuntime"));
 	}
 
 	public String getWeblogicVersion() {
 		return getStringAttribute("WeblogicVersion");
 	}
-	
+
 	public Boolean isRestartRequired() {
 		return getBooleanAttribute("RestartRequired");
 	}
-	
 
 }

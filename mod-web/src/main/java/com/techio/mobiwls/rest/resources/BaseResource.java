@@ -38,10 +38,10 @@ import com.techio.mobiwls.rest.infoObjects.ServerInfo;
 
 /**
  * @author Filip Slavik (filip@techio.com)
- *
+ * 
  */
 public class BaseResource {
-	
+
 	public static final String EMPTY_STRING = "";
 
 	public static final String JSON_CONTENT_TYPE = "application/json";
@@ -53,23 +53,25 @@ public class BaseResource {
 	protected ObjectName domainRuntimeServiceMBeanObjectName;
 
 	protected ObjectName runtimeServiceMBeanObjectName;
-	
+
 	protected byte[] computeHash(Object object) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		md.update(String.valueOf(object).getBytes());
 		return md.digest();
 	}
-	
+
 	/**
-	 * Constructs and returns an instance of {@link ServerInfo} with the bare minimum info
-	 * filled.
+	 * Constructs and returns an instance of {@link ServerInfo} with the bare
+	 * minimum info filled.
 	 * 
 	 * @see BaseResource#lookupDomainRuntimeServiceMBean()
 	 * 
-	 * @param serverMBean The WLS server mbean
+	 * @param serverMBean
+	 *            The WLS server mbean
 	 * @return A minimalistics instance of {@link ServerInfo}
 	 */
-	protected ServerInfo constructMinimalServerInfo(ServerMBeanWrapper serverMBean) {
+	protected ServerInfo constructMinimalServerInfo(
+			ServerMBeanWrapper serverMBean) {
 		ServerInfo sinfo = new ServerInfo();
 		sinfo.setName(serverMBean.getName());
 		return sinfo;
@@ -83,7 +85,7 @@ public class BaseResource {
 		}
 		return sb.toString();
 	}
-	
+
 	@PreDestroy
 	protected void destroy() {
 		if (cacheManager != null) {
@@ -105,6 +107,7 @@ public class BaseResource {
 		}
 
 	}
+
 	protected String getStringAttribute(MBeanServer mbeanServer,
 			ObjectName objectName, String attributeName) {
 		Object attribute = getAttribute(mbeanServer, objectName, attributeName);
@@ -117,12 +120,13 @@ public class BaseResource {
 
 	@PostConstruct
 	protected void initialize() {
-		
+
 		try {
 			domainRuntimeServiceMBeanObjectName = new ObjectName(
 					"com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean");
 		} catch (MalformedObjectNameException e) {
-			throw new RuntimeException("failed to resolve DomainRuntimeService", e);
+			throw new RuntimeException(
+					"failed to resolve DomainRuntimeService", e);
 		}
 
 		try {
@@ -131,17 +135,17 @@ public class BaseResource {
 		} catch (MalformedObjectNameException e) {
 			throw new RuntimeException("failed to resolve RuntimeService", e);
 		}
-		
-		
+
 		cacheManager = CacheManager.getInstance();
 		/* add the memory cache if it does not yet exist */
-		if(!cacheManager.cacheExists(MEMORY_CACHE)) {
-			Cache memoryCache = new Cache(MEMORY_CACHE, 5000, false, false, 5, 5);
+		if (!cacheManager.cacheExists(MEMORY_CACHE)) {
+			Cache memoryCache = new Cache(MEMORY_CACHE, 5000, false, false, 5,
+					5);
 			cacheManager.addCache(memoryCache);
 		}
 		System.err.println("post construct!!!!!");
 	}
-	
+
 	protected MBeanServer lookupDomainRuntimeServiceMBean()
 			throws NamingException {
 		return (MBeanServer) InitialContext

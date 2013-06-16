@@ -23,10 +23,10 @@ import javax.management.ObjectName;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public abstract class BaseMBeanWrapper {
-	
+
 	protected ObjectName mbean = null;
 
 	protected MBeanServer mbeanServer = null;
@@ -36,32 +36,28 @@ public abstract class BaseMBeanWrapper {
 		this.mbean = mbean;
 		this.mbeanServer = mbeanServer;
 	}
-	
+
 	protected Object getAttribute(String attribute) {
-		return JMXUtils.getAttribute(mbeanServer, mbean,
-				attribute);
+		return JMXUtils.getAttribute(mbeanServer, mbean, attribute);
 	}
-	
+
 	protected Boolean getBooleanAttribute(String attribute) {
-		return (Boolean) JMXUtils.getAttribute(mbeanServer, mbean,
-				attribute);
+		return (Boolean) JMXUtils.getAttribute(mbeanServer, mbean, attribute);
 	}
-	
+
 	protected Integer getIntegerAttribute(String attribute) {
-		return (Integer) JMXUtils.getAttribute(mbeanServer, mbean,
-				attribute);
+		return (Integer) JMXUtils.getAttribute(mbeanServer, mbean, attribute);
 	}
-	
+
 	protected Long getLongAttribute(String attribute) {
-		return (Long) JMXUtils.getAttribute(mbeanServer, mbean,
-				attribute);
+		return (Long) JMXUtils.getAttribute(mbeanServer, mbean, attribute);
 	}
 
 	protected MBeanServer getMbeanServer() {
 		return mbeanServer;
 	}
+
 	protected String getStringAttribute(String attribute) {
-		return JMXUtils.getStringAttribute(mbeanServer, mbean,
-				attribute);
+		return JMXUtils.getStringAttribute(mbeanServer, mbean, attribute);
 	}
 }

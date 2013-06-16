@@ -31,82 +31,90 @@ public class DomainMBeanWrapper extends BaseMBeanWrapper {
 	}
 
 	public List<AppDeploymentMBeanWrapper> getAppDeployments() {
-		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(mbeanServer, mbean, "AppDeployments");
+		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(
+				mbeanServer, mbean, "AppDeployments");
 		List<AppDeploymentMBeanWrapper> _result = new ArrayList<AppDeploymentMBeanWrapper>();
 		for (ObjectName mbean : serverMBeans) {
 			_result.add(new AppDeploymentMBeanWrapper(mbeanServer, mbean));
 		}
 		return _result;
 	}
-	
+
 	public List<ClusterMBeanWrapper> getClusters() {
-		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(mbeanServer, mbean, "Clusters");
+		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(
+				mbeanServer, mbean, "Clusters");
 		List<ClusterMBeanWrapper> _result = new ArrayList<ClusterMBeanWrapper>();
 		for (ObjectName mbean : serverMBeans) {
 			_result.add(new ClusterMBeanWrapper(mbeanServer, mbean));
 		}
 		return _result;
 	}
-	
+
 	public String getConfigurationVersion() {
 		return getStringAttribute("ConfigurationVersion");
 	}
-	
+
 	public String getConsoleContextPath() {
 		return getStringAttribute("ConsoleContextPath");
 	}
-	
+
 	public String getDomainVersion() {
 		return getStringAttribute("DomainVersion");
 	}
-	
+
 	public List<JDBCSystemResourceMBeanWrapper> getJDBCSystemResources() {
-		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(mbeanServer, mbean, "JDBCSystemResources");
+		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(
+				mbeanServer, mbean, "JDBCSystemResources");
 		List<JDBCSystemResourceMBeanWrapper> _result = new ArrayList<JDBCSystemResourceMBeanWrapper>();
 		for (ObjectName mbean : serverMBeans) {
 			_result.add(new JDBCSystemResourceMBeanWrapper(mbeanServer, mbean));
 		}
 		return _result;
 	}
-	
+
 	public List<JMSServerMBeanWrapper> getJMSServers() {
-		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(mbeanServer, mbean, "JMSServers");
+		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(
+				mbeanServer, mbean, "JMSServers");
 		List<JMSServerMBeanWrapper> _result = new ArrayList<JMSServerMBeanWrapper>();
 		for (ObjectName mbean : serverMBeans) {
 			_result.add(new JMSServerMBeanWrapper(mbeanServer, mbean));
 		}
 		return _result;
 	}
-	
+
 	public Long getLastModificationTime() {
 		return getLongAttribute("LastModificationTime");
 	}
-	
+
 	public String getName() {
 		return getStringAttribute("Name");
 	}
-	
+
 	public List<ServerMBeanWrapper> getServers() {
-		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(mbeanServer, mbean, "Servers");
+		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(
+				mbeanServer, mbean, "Servers");
 		List<ServerMBeanWrapper> _result = new ArrayList<ServerMBeanWrapper>();
 		for (ObjectName mbean : serverMBeans) {
 			_result.add(new ServerMBeanWrapper(mbeanServer, mbean));
 		}
 		return _result;
 	}
-	
+
 	public ServerMBeanWrapper getServers(String serverName) {
-		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(mbeanServer, mbean, "Servers");
+		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(
+				mbeanServer, mbean, "Servers");
 		for (ObjectName mbean : serverMBeans) {
-			if(JMXUtils.getStringAttribute(mbeanServer, mbean, "Name").equals(serverName)) {
+			if (JMXUtils.getStringAttribute(mbeanServer, mbean, "Name").equals(
+					serverName)) {
 				return new ServerMBeanWrapper(mbeanServer, mbean);
-			} else continue;
+			} else
+				continue;
 		}
 		return null;
 	}
-	
+
 	public Boolean isConsoleEnabled() {
 		return getBooleanAttribute("ConsoleEnabled");
 	}
-	
+
 }

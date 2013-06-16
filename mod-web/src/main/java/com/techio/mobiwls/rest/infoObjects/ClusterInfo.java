@@ -20,10 +20,10 @@ package com.techio.mobiwls.rest.infoObjects;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public class ClusterInfo {
-	
+
 	/**
 	 * An alphanumeric name for this cluster instance. (Spaces are not valid.)
 	 */
@@ -41,6 +41,5 @@ public class ClusterInfo {
 	public String toString() {
 		return "ClusterInfo [name=" + name + "]";
 	}
-	
-		
+
 }

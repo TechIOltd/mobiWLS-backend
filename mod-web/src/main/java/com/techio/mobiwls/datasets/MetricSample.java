@@ -22,14 +22,14 @@ import java.util.Date;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public class MetricSample {
 
 	private Date sampledOn;
 
 	private Number sampledValue;
-	
+
 	public MetricSample(Date sampledOn, Number sampledValue) {
 		super();
 		this.sampledOn = sampledOn;
@@ -43,6 +43,5 @@ public class MetricSample {
 	public Number getSampledValue() {
 		return sampledValue;
 	}
-	
-	
+
 }

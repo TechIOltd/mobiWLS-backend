@@ -37,7 +37,7 @@ public class JMXUtils {
 		}
 
 	}
-	
+
 	public static String getStringAttribute(MBeanServer mbeanServer,
 			ObjectName objectName, String attributeName) {
 		Object attribute = getAttribute(mbeanServer, objectName, attributeName);

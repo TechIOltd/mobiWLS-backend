@@ -23,14 +23,14 @@ import javax.management.ObjectName;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public class JMSServerMBeanWrapper extends BaseMBeanWrapper {
 
 	protected JMSServerMBeanWrapper(MBeanServer mbeanServer, ObjectName mbean) {
 		super(mbeanServer, mbean);
 	}
-	
+
 	public String getName() {
 		return getStringAttribute("Name");
 	}

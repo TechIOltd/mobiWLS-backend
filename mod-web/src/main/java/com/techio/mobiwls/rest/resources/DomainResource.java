@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2013 TechIO Ltd (http://techio.com)
  * 
@@ -108,16 +107,19 @@ public class DomainResource extends BaseResource {
 
 	protected DomainInfo constructDomainInfo() {
 		try {
-			
-			DomainMBeanWrapper _domainMBean = domainRuntime.getDomainConfiguration();
-			
+
+			DomainMBeanWrapper _domainMBean = domainRuntime
+					.getDomainConfiguration();
+
 			DomainInfo returnValue = new DomainInfo();
 			returnValue.setDomainVersion(_domainMBean.getDomainVersion());
-			returnValue.setConfigurationVersion(_domainMBean.getConfigurationVersion());
+			returnValue.setConfigurationVersion(_domainMBean
+					.getConfigurationVersion());
 			returnValue.setConsoleEnabled(_domainMBean.isConsoleEnabled());
 			returnValue.setConsolePath(_domainMBean.getConsoleContextPath());
 
-			returnValue.setLastModificationTime(_domainMBean.getLastModificationTime());
+			returnValue.setLastModificationTime(_domainMBean
+					.getLastModificationTime());
 			returnValue.setName(_domainMBean.getName());
 
 			// fetch domain server
@@ -128,7 +130,8 @@ public class DomainResource extends BaseResource {
 			}
 
 			// fetch domain clusters
-			List<ClusterMBeanWrapper> clusterMBeans = _domainMBean.getClusters();
+			List<ClusterMBeanWrapper> clusterMBeans = _domainMBean
+					.getClusters();
 			List<ClusterInfo> _clusterInfo = returnValue.getClusters();
 			for (ClusterMBeanWrapper mbean : clusterMBeans) {
 				ClusterInfo info = new ClusterInfo();
@@ -137,7 +140,8 @@ public class DomainResource extends BaseResource {
 			}
 
 			// fetch domain jms servers
-			List<JMSServerMBeanWrapper> jmsMBeans = _domainMBean.getJMSServers();
+			List<JMSServerMBeanWrapper> jmsMBeans = _domainMBean
+					.getJMSServers();
 			List<JMSServerInfo> _jmsServerInfo = returnValue.getJmsServers();
 			for (JMSServerMBeanWrapper mbean : jmsMBeans) {
 				JMSServerInfo info = new JMSServerInfo();
@@ -146,7 +150,8 @@ public class DomainResource extends BaseResource {
 			}
 
 			// fetch domain datasources
-			List<JDBCSystemResourceMBeanWrapper> datasourceMBeans = _domainMBean.getJDBCSystemResources();
+			List<JDBCSystemResourceMBeanWrapper> datasourceMBeans = _domainMBean
+					.getJDBCSystemResources();
 			List<JDBCResourceInfo> _jdbcResourceInfo = returnValue
 					.getDataSources();
 			for (JDBCSystemResourceMBeanWrapper mbean : datasourceMBeans) {
@@ -156,7 +161,8 @@ public class DomainResource extends BaseResource {
 			}
 
 			// fetch domain deployments
-			List<AppDeploymentMBeanWrapper> appDeploymentsMBeans = _domainMBean.getAppDeployments();
+			List<AppDeploymentMBeanWrapper> appDeploymentsMBeans = _domainMBean
+					.getAppDeployments();
 			List<DeploymentInfo> _deploymentInfo = returnValue.getDeployments();
 			for (AppDeploymentMBeanWrapper mbean : appDeploymentsMBeans) {
 				DeploymentInfo info = new DeploymentInfo();
@@ -164,7 +170,6 @@ public class DomainResource extends BaseResource {
 				_deploymentInfo.add(info);
 			}
 
-			
 			/* compute the hash from the toString */
 			returnValue
 					.setVersion(convertByteToHexString(computeHash(returnValue
@@ -229,7 +234,6 @@ public class DomainResource extends BaseResource {
 		return new ResourceVersion(DomainInfo.class.getName(),
 				info.getVersion());
 	}
-
 
 	/**
 	 * MWLS-1 : Retrieve domain health overview

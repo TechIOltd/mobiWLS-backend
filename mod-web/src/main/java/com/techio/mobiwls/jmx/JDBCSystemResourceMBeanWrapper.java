@@ -23,14 +23,15 @@ import javax.management.ObjectName;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public class JDBCSystemResourceMBeanWrapper extends BaseMBeanWrapper {
 
-	protected JDBCSystemResourceMBeanWrapper(MBeanServer mbeanServer, ObjectName mbean) {
+	protected JDBCSystemResourceMBeanWrapper(MBeanServer mbeanServer,
+			ObjectName mbean) {
 		super(mbeanServer, mbean);
 	}
-	
+
 	public String getName() {
 		return getStringAttribute("Name");
 	}

@@ -153,6 +153,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 			metrics.add(serverMetrics.throughput.getInfo());
 			metrics.add(serverMetrics.hoggingThreads.getInfo());
 			metrics.add(serverMetrics.idleThreads.getInfo());
+
 			returnValue.getMetrics().addAll(metrics);
 
 			/* compute the hash from the toString */

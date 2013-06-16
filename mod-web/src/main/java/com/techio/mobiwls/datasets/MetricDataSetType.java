@@ -20,7 +20,7 @@ package com.techio.mobiwls.datasets;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public enum MetricDataSetType {
 	/**

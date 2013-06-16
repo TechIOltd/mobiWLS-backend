@@ -55,104 +55,88 @@ public class ServerThreadPoolRuntimeInfo {
 	 * the count of all user requests.
 	 */
 	private Integer pendingUserRequestCount;
-	
-	
+
 	/**
-	 * The number of pending requests in the priority queue. This is the total of internal system requests and user requests.
+	 * The number of pending requests in the priority queue. This is the total
+	 * of internal system requests and user requests.
 	 */
 	private Integer queueLength;
 
 	/**
-	 * The number of threads in the standby pool. Threads that are not needed to handle the present work load are designated as standby and added to the standby pool. These threads are activated when more threads are needed.
+	 * The number of threads in the standby pool. Threads that are not needed to
+	 * handle the present work load are designated as standby and added to the
+	 * standby pool. These threads are activated when more threads are needed.
 	 */
 	private Integer standbyThreadCount;
-	
-	
+
 	/**
 	 * The mean number of requests completed per second.
 	 */
 	private Double throughput;
 
-
 	public Long getCompletedRequestCount() {
 		return completedRequestCount;
 	}
-
 
 	public Integer getExecuteThreadIdleCount() {
 		return executeThreadIdleCount;
 	}
 
-
 	public Integer getExecuteThreadTotalCount() {
 		return executeThreadTotalCount;
 	}
-
 
 	public Integer getHoggingThreadCount() {
 		return hoggingThreadCount;
 	}
 
-
 	public Integer getPendingUserRequestCount() {
 		return pendingUserRequestCount;
 	}
-
 
 	public Integer getQueueLength() {
 		return queueLength;
 	}
 
-
 	public Integer getStandbyThreadCount() {
 		return standbyThreadCount;
 	}
-
 
 	public Double getThroughput() {
 		return throughput;
 	}
 
-
 	public void setCompletedRequestCount(Long completedRequestCount) {
 		this.completedRequestCount = completedRequestCount;
 	}
-
 
 	public void setExecuteThreadIdleCount(Integer executeThreadIdleCount) {
 		this.executeThreadIdleCount = executeThreadIdleCount;
 	}
 
-
 	public void setExecuteThreadTotalCount(Integer executeThreadTotalCount) {
 		this.executeThreadTotalCount = executeThreadTotalCount;
 	}
-
 
 	public void setHoggingThreadCount(Integer hoggingThreadCount) {
 		this.hoggingThreadCount = hoggingThreadCount;
 	}
 
-
 	public void setPendingUserRequestCount(Integer pendingUserRequestCount) {
 		this.pendingUserRequestCount = pendingUserRequestCount;
 	}
-
 
 	public void setQueueLength(Integer queueLength) {
 		this.queueLength = queueLength;
 	}
 
-
 	public void setStandbyThreadCount(Integer standbyThreadCount) {
 		this.standbyThreadCount = standbyThreadCount;
 	}
 
-
 	public void setThroughput(Double throughput) {
 		this.throughput = throughput;
 	}
-
 
 	@Override
 	public String toString() {
@@ -166,9 +150,4 @@ public class ServerThreadPoolRuntimeInfo {
 				+ ", throughput=" + throughput + "]";
 	}
 
-
-	
-
-	
-	
 }

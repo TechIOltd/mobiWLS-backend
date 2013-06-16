@@ -20,16 +20,15 @@ package com.techio.mobiwls.rest.infoObjects;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public class DeploymentInfo {
-	
+
 	/**
 	 * An alphanumeric name for this deployment. (Spaces are not valid.)
 	 */
 	private String name;
-	
-	
+
 	public String getName() {
 		return name;
 	}
@@ -43,5 +42,4 @@ public class DeploymentInfo {
 		return "DeploymentInfo [name=" + name + "]";
 	}
 
-		
 }

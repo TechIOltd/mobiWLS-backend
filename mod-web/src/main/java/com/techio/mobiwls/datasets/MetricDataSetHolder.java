@@ -18,7 +18,6 @@
 
 package com.techio.mobiwls.datasets;
 
-
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
  * 
@@ -32,7 +31,8 @@ public class MetricDataSetHolder {
 	/**
 	 * 
 	 */
-	public MetricDataSetHolder(String id, String title, String description, String axisXTitle, String axisYTitle,
+	public MetricDataSetHolder(String id, String title, String description,
+			String axisXTitle, String axisYTitle,
 			MetricDataSetType dataSetType, Integer setCapacity) {
 		super();
 		MetricDataSetInfo _info = new MetricDataSetInfo(dataSetType);

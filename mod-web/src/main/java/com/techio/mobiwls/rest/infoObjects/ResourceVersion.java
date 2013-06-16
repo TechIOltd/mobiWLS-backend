@@ -19,11 +19,11 @@
 package com.techio.mobiwls.rest.infoObjects;
 
 public class ResourceVersion {
-	
+
 	private String name;
 
 	private String version;
-	
+
 	public ResourceVersion(String name, String version) {
 		super();
 		this.name = name;

@@ -20,16 +20,16 @@ package com.techio.mobiwls.rest.infoObjects;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public class JMSServerInfo {
-	
+
 	/**
-	 * An alphanumeric name for this jms server instance. (Spaces are not valid.)
+	 * An alphanumeric name for this jms server instance. (Spaces are not
+	 * valid.)
 	 */
 	private String name;
-	
-	
+
 	public String getName() {
 		return name;
 	}
@@ -43,6 +43,4 @@ public class JMSServerInfo {
 		return "JMSServerInfo [name=" + name + "]";
 	}
 
-	
-	
 }

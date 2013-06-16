@@ -37,17 +37,21 @@ public class DomainRuntimeServiceMBeanWrapper {
 		this.domainRuntimeServiceMBeanServer = domainRuntimeServiceMBeanServer;
 		this.domainRuntimeServiceMBeanObjectName = domainRuntimeServiceMBeanObjectName;
 	}
-	
+
 	/**
 	 * returns the active DomainMBean for the current WebLogic Server domain.
 	 * 
 	 * @return
 	 */
 	public DomainMBeanWrapper getDomainConfiguration() {
-		ObjectName domainMbean = (ObjectName)JMXUtils.getAttribute(domainRuntimeServiceMBeanServer, domainRuntimeServiceMBeanObjectName, "DomainConfiguration");
-		if(domainMbean!=null) {
-			return new DomainMBeanWrapper(domainRuntimeServiceMBeanServer, domainMbean);
-		} else return null;
+		ObjectName domainMbean = (ObjectName) JMXUtils.getAttribute(
+				domainRuntimeServiceMBeanServer,
+				domainRuntimeServiceMBeanObjectName, "DomainConfiguration");
+		if (domainMbean != null) {
+			return new DomainMBeanWrapper(domainRuntimeServiceMBeanServer,
+					domainMbean);
+		} else
+			return null;
 	}
 
 	/**
@@ -73,9 +77,6 @@ public class DomainRuntimeServiceMBeanWrapper {
 		}
 		return null;
 	}
-	
-	
-	
 
 	protected ObjectName[] getServerRuntimeMBeans() {
 		try {

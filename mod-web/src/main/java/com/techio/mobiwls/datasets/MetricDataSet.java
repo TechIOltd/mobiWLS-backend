@@ -23,31 +23,30 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
+ * 
  */
 public class MetricDataSet {
 
-private ArrayBlockingQueue<MetricSample> samples;
-	
+	private ArrayBlockingQueue<MetricSample> samples;
+
 	private Date youngestEntry = null;
-	
-	
-	
+
 	private MetricDataSet() {
 		super();
 	}
-	
+
 	public MetricDataSet(int capacity) {
 		this();
 		samples = new ArrayBlockingQueue<MetricSample>(capacity);
 	}
-	
-	
-	
+
 	public void addSample(MetricSample sample) {
 		try {
 			if (samples.remainingCapacity() == 0) {
-				/* no more space in queue, remove the item currently on queue's head */
+				/*
+				 * no more space in queue, remove the item currently on queue's
+				 * head
+				 */
 				MetricSample element = samples.take();
 			}
 			// add the new sample and update the youngest entry date
@@ -58,14 +57,10 @@ private ArrayBlockingQueue<MetricSample> samples;
 		}
 	}
 
-	
-
 	public Integer getEntriesCount() {
 		return samples != null ? samples.size() : 0;
 	}
 
-
-	
 	public Date getOldestEntry() {
 		MetricSample oldestEntry = samples.peek();
 		return oldestEntry != null ? oldestEntry.getSampledOn() : null;
@@ -78,7 +73,5 @@ private ArrayBlockingQueue<MetricSample> samples;
 	public Date getYoungestEntry() {
 		return youngestEntry;
 	}
-
-
 
 }
