@@ -33,6 +33,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+
 import com.sun.jersey.spi.resource.Singleton;
 import com.techio.mobiwls.datasets.MetricDataSet;
 import com.techio.mobiwls.datasets.MetricDataSetHolder;
@@ -45,6 +48,9 @@ import com.techio.mobiwls.jmx.ServerRuntimeMBeanWrapper;
 import com.techio.mobiwls.jmx.ThreadPoolRuntimeWrapper;
 import com.techio.mobiwls.rest.NoRuntimeAvailableException;
 import com.techio.mobiwls.rest.NotFoundException;
+import com.techio.mobiwls.rest.infoObjects.DomainInfo;
+import com.techio.mobiwls.rest.infoObjects.MetricsInfo;
+import com.techio.mobiwls.rest.infoObjects.ResourceVersion;
 import com.techio.mobiwls.rest.infoObjects.ServerInfo;
 import com.techio.mobiwls.rest.infoObjects.ServerRuntimeInfo;
 import com.techio.mobiwls.rest.infoObjects.ServerThreadPoolRuntimeInfo;
@@ -66,49 +72,49 @@ public class ServerResource extends BaseResource implements TimerListener {
 		 * The number of completed requests in the priority queue
 		 */
 		private MetricDataSetHolder completedRequest;
+		private MetricDataSetHolder hoggingThreads;
+
+		private MetricDataSetHolder idleThreads;
+
 		protected Map<String, MetricDataSetHolder> metricIndex = new HashMap<String, MetricDataSetHolder>();
 
 		/**
 		 * The mean number of requests completed per second.
 		 */
 		private MetricDataSetHolder throughput;
-		
-		private MetricDataSetHolder hoggingThreads;
-		
-		private MetricDataSetHolder idleThreads;
 
 		protected ServerMetrics() {
 			super();
-			completedRequest = new MetricDataSetHolder("ServerCompletedRequest", "Completed Request",
-					"The number of completed requests in the priority queue", "Time", "Completed Request / 5 min", MetricDataSetType.COUNTER_TYPE,
-					288);
-			
-			metricIndex.put(completedRequest.getInfo().getId(), completedRequest);
-			
-			throughput = new MetricDataSetHolder("ServerThroughput", "Server Throughput",
-					"The mean number of requests completed per second", "Time", "Throughput",MetricDataSetType.GAUGE_TYPE, 288);
+			completedRequest = new MetricDataSetHolder(
+					"ServerCompletedRequest", "Completed Request",
+					"The number of completed requests in the priority queue",
+					"Time", "Completed Request / 5 min",
+					MetricDataSetType.COUNTER_TYPE, 288);
+
+			metricIndex.put(completedRequest.getInfo().getId(),
+					completedRequest);
+
+			throughput = new MetricDataSetHolder("ServerThroughput",
+					"Server Throughput",
+					"The mean number of requests completed per second", "Time",
+					"Throughput", MetricDataSetType.GAUGE_TYPE, 288);
 			metricIndex.put(throughput.getInfo().getId(), throughput);
-			
-			hoggingThreads = new MetricDataSetHolder("HoggingThreadCount", "Hogging Threads",
-					"The threads that are being held by a request right now.", "Time", "Threads",MetricDataSetType.GAUGE_TYPE, 288);
+
+			hoggingThreads = new MetricDataSetHolder("HoggingThreadCount",
+					"Hogging Threads",
+					"The threads that are being held by a request right now.",
+					"Time", "Threads", MetricDataSetType.GAUGE_TYPE, 288);
 			metricIndex.put(hoggingThreads.getInfo().getId(), hoggingThreads);
-			
-			idleThreads = new MetricDataSetHolder("ExecuteThreadIdleCount", "Idle Threads",
-					"The number of idle threads in the pool", "Time", "Threads",MetricDataSetType.GAUGE_TYPE, 288);
+
+			idleThreads = new MetricDataSetHolder("ExecuteThreadIdleCount",
+					"Idle Threads", "The number of idle threads in the pool",
+					"Time", "Threads", MetricDataSetType.GAUGE_TYPE, 288);
 			metricIndex.put(idleThreads.getInfo().getId(), idleThreads);
 
 		}
-		
+
 		public MetricDataSetHolder getCompletedRequest() {
 			return completedRequest;
-		}
-
-		public MetricDataSetHolder getMetricById(String metricId) {
-			return metricIndex.get(metricId);
-		}
-
-		public MetricDataSetHolder getThroughput() {
-			return throughput;
 		}
 
 		public MetricDataSetHolder getHoggingThreads() {
@@ -118,6 +124,14 @@ public class ServerResource extends BaseResource implements TimerListener {
 		public MetricDataSetHolder getIdleThreads() {
 			return idleThreads;
 		}
+
+		public MetricDataSetHolder getMetricById(String metricId) {
+			return metricIndex.get(metricId);
+		}
+
+		public MetricDataSetHolder getThroughput() {
+			return throughput;
+		}
 	}
 
 	private Timer analyticsTimer = null;
@@ -125,6 +139,33 @@ public class ServerResource extends BaseResource implements TimerListener {
 	protected DomainRuntimeServiceMBeanWrapper domainRuntime;
 
 	protected Map<String, ServerMetrics> serverMetricSet = new HashMap<String, ServerResource.ServerMetrics>();
+
+	protected MetricsInfo constructMetricsInfo(String serverName) {
+		ServerMetrics serverMetrics = serverMetricSet.get(serverName);
+		if (serverMetrics == null) {
+			throw new NotFoundException(String.format(
+					"No metrics found for server '%s'", serverName));
+		}
+		try {
+			MetricsInfo returnValue = new MetricsInfo();
+			List<MetricDataSetInfo> metrics = new ArrayList<MetricDataSetInfo>();
+			metrics.add(serverMetrics.completedRequest.getInfo());
+			metrics.add(serverMetrics.throughput.getInfo());
+			metrics.add(serverMetrics.hoggingThreads.getInfo());
+			metrics.add(serverMetrics.idleThreads.getInfo());
+			returnValue.getMetrics().addAll(metrics);
+
+			/* compute the hash from the toString */
+			returnValue
+					.setVersion(convertByteToHexString(computeHash(returnValue
+							.toString())));
+
+			return returnValue;
+
+		} catch (Exception ex) {
+			throw new WebApplicationException(ex);
+		}
+	}
 
 	protected ServerRuntimeInfo constructServerRuntimeInfo(
 			ServerRuntimeMBeanWrapper serverRuntime) {
@@ -174,33 +215,56 @@ public class ServerResource extends BaseResource implements TimerListener {
 		super.destroy();
 	}
 
-	
-	
+	/**
+	 * Returns a cache key for the metricinfo for a given server
+	 * 
+	 * @param serverName
+	 *            The name of the server
+	 * @return a cache key
+	 */
+	protected String getCacheKeyForServerMetrics(String serverName) {
+		return String.format("%s-%s", MetricsInfo.CACHE_KEY, serverName);
+	}
+
 	@GET
 	@Produces({ JSON_CONTENT_TYPE })
 	@Path("/{serverName}/metric")
-	public List<MetricDataSetInfo> getServerAvailableMetrics(
+	public MetricsInfo getServerAvailableMetrics(
 			@PathParam("serverName") String serverName) {
 
-		ServerMetrics serverMetrics = serverMetricSet.get(serverName);
-		if (serverMetrics == null) {
-			throw new NotFoundException(String.format(
-					"No metrics found for server '%s'", serverName));
-		}
-		try {
-			List<MetricDataSetInfo> returnValue = new ArrayList<MetricDataSetInfo>();
-			returnValue.add(serverMetrics.completedRequest.getInfo());
-			returnValue.add(serverMetrics.throughput.getInfo());
-			returnValue.add(serverMetrics.hoggingThreads.getInfo());
-			returnValue.add(serverMetrics.idleThreads.getInfo());
+		/* the return value */
+		MetricsInfo returnValue = null;
 
-			return returnValue;
+		/* check if we have the metrics info in cache */
+		String cacheKey = getCacheKeyForServerMetrics(serverName);
+		Cache cache = cacheManager.getCache(MEMORY_CACHE);
+		Element element = cache.get(cacheKey);
+		if (element != null) {
+			returnValue = (MetricsInfo) element.getObjectValue();
+		} else {
+			/* cache miss */
+			try {
+				returnValue = constructMetricsInfo(serverName);
 
-		} catch (Exception ex) {
-			throw new WebApplicationException(ex);
+				/* store the domain info into the cache */
+				cache.put(new Element(cacheKey, returnValue));
+			} catch (Exception ex) {
+				throw new WebApplicationException(ex);
+			}
 		}
+		return returnValue;
 	}
-	
+
+	@GET
+	@Produces({ JSON_CONTENT_TYPE })
+	@Path("/{serverName}/metric/version")
+	public ResourceVersion getServerAvailableMetricsVersion(
+			@PathParam("serverName") String serverName) {
+		MetricsInfo info = getServerAvailableMetrics(serverName);
+		return new ResourceVersion(MetricsInfo.class.getName(),
+				info.getVersion());
+	}
+
 	@GET
 	@Produces({ JSON_CONTENT_TYPE })
 	@Path("/{serverName}")
@@ -229,21 +293,23 @@ public class ServerResource extends BaseResource implements TimerListener {
 	@Produces({ JSON_CONTENT_TYPE })
 	@Path("/{serverName}/metric/{metricId}")
 	public MetricDataSet getServerMetrics(
-			@PathParam("serverName") String serverName, @PathParam("metricId")String metricId) {
+			@PathParam("serverName") String serverName,
+			@PathParam("metricId") String metricId) {
 
 		ServerMetrics serverMetrics = serverMetricSet.get(serverName);
 		if (serverMetrics == null) {
 			throw new NotFoundException(String.format(
 					"No metrics found for server '%s'", serverName));
 		}
-		
+
 		MetricDataSetHolder metric = serverMetrics.getMetricById(metricId);
-		if(metric == null) {
+		if (metric == null) {
 			throw new NotFoundException(String.format(
-					"Metric '%s' not found for server '%s'", metricId, serverName));
+					"Metric '%s' not found for server '%s'", metricId,
+					serverName));
 		}
 		return metric.getDataset();
-		
+
 	}
 
 	@GET
@@ -296,8 +362,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 			InitialContext inctxt = new InitialContext();
 			TimerManager mgr = (TimerManager) inctxt
 					.lookup("java:comp/env/tm/default");
-			analyticsTimer = mgr.scheduleAtFixedRate(this, 0,
-					500);
+			analyticsTimer = mgr.scheduleAtFixedRate(this, 0, 500);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
@@ -348,9 +413,11 @@ public class ServerResource extends BaseResource implements TimerListener {
 					new MetricSample(sampleDate, serverCompletedRequestCount));
 			serverMetrics.getThroughput().addSample(
 					new MetricSample(sampleDate, serverThroughput));
-			serverMetrics.getHoggingThreads().addSample(new MetricSample(sampleDate,serverHoggingTreadCount));
-			serverMetrics.getIdleThreads().addSample(new MetricSample(sampleDate,serverIdleThreadCount));
-			
+			serverMetrics.getHoggingThreads().addSample(
+					new MetricSample(sampleDate, serverHoggingTreadCount));
+			serverMetrics.getIdleThreads().addSample(
+					new MetricSample(sampleDate, serverIdleThreadCount));
+
 		}
 
 	}

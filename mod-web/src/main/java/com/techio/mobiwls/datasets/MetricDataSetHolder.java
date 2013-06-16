@@ -35,13 +35,12 @@ public class MetricDataSetHolder {
 	public MetricDataSetHolder(String id, String title, String description, String axisXTitle, String axisYTitle,
 			MetricDataSetType dataSetType, Integer setCapacity) {
 		super();
-		MetricDataSetInfo _info = new MetricDataSetInfo();
+		MetricDataSetInfo _info = new MetricDataSetInfo(dataSetType);
 		_info.setId(id);
 		_info.setTitle(title);
 		_info.setDescription(description);
 		_info.setAxisXTitle(axisXTitle);
 		_info.setAxisYTitle(axisYTitle);
-		_info.setDataSetType(dataSetType);
 		this.info = _info;
 		this.dataset = new MetricDataSet(setCapacity);
 	}
