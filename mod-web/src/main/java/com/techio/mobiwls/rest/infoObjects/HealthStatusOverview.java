@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.techio.mobiwls.rest.resources;
+package com.techio.mobiwls.rest.infoObjects;
 
 import java.io.Serializable;
 import java.util.ArrayList;

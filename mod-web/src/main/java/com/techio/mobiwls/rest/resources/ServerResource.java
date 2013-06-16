@@ -44,6 +44,9 @@ import com.techio.mobiwls.jmx.ServerRuntimeMBeanWrapper;
 import com.techio.mobiwls.jmx.ThreadPoolRuntimeWrapper;
 import com.techio.mobiwls.rest.NoRuntimeAvailableException;
 import com.techio.mobiwls.rest.NotFoundException;
+import com.techio.mobiwls.rest.infoObjects.ServerInfo;
+import com.techio.mobiwls.rest.infoObjects.ServerRuntimeInfo;
+import com.techio.mobiwls.rest.infoObjects.ServerThreadPoolRuntimeInfo;
 
 import commonj.timers.Timer;
 import commonj.timers.TimerListener;

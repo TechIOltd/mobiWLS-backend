@@ -31,6 +31,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import com.techio.mobiwls.jmx.ServerMBeanWrapper;
+import com.techio.mobiwls.rest.infoObjects.ServerInfo;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;

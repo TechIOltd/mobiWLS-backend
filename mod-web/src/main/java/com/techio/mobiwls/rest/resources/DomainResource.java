@@ -41,6 +41,15 @@ import com.techio.mobiwls.jmx.DomainRuntimeServiceMBeanWrapper;
 import com.techio.mobiwls.jmx.JDBCSystemResourceMBeanWrapper;
 import com.techio.mobiwls.jmx.JMSServerMBeanWrapper;
 import com.techio.mobiwls.jmx.ServerMBeanWrapper;
+import com.techio.mobiwls.rest.infoObjects.ClusterInfo;
+import com.techio.mobiwls.rest.infoObjects.DeploymentInfo;
+import com.techio.mobiwls.rest.infoObjects.DomainInfo;
+import com.techio.mobiwls.rest.infoObjects.HealthState;
+import com.techio.mobiwls.rest.infoObjects.HealthStatusOverview;
+import com.techio.mobiwls.rest.infoObjects.JDBCResourceInfo;
+import com.techio.mobiwls.rest.infoObjects.JMSServerInfo;
+import com.techio.mobiwls.rest.infoObjects.ResourceVersion;
+import com.techio.mobiwls.rest.infoObjects.ServerInfo;
 
 @Path("/domain")
 @Singleton

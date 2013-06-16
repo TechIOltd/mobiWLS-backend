@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.techio.mobiwls.rest.resources;
+package com.techio.mobiwls.rest.infoObjects;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>

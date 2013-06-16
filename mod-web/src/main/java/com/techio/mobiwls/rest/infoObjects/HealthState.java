@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.techio.mobiwls.rest.resources;
+package com.techio.mobiwls.rest.infoObjects;
 
 public interface HealthState {
 	public static final int	HEALTH_CRITICAL	= 2;

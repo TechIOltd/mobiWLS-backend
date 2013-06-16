@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-package com.techio.mobiwls.rest.resources;
+package com.techio.mobiwls.rest.infoObjects;
 
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
  *
  */
-public class JMSServerInfo {
+public class DeploymentInfo {
 	
 	/**
-	 * An alphanumeric name for this jms server instance. (Spaces are not valid.)
+	 * An alphanumeric name for this deployment. (Spaces are not valid.)
 	 */
 	private String name;
 	
@@ -40,9 +40,8 @@ public class JMSServerInfo {
 
 	@Override
 	public String toString() {
-		return "JMSServerInfo [name=" + name + "]";
+		return "DeploymentInfo [name=" + name + "]";
 	}
 
-	
-	
+		
 }
