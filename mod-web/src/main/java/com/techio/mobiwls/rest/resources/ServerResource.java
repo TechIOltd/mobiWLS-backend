@@ -69,18 +69,30 @@ public class ServerResource extends BaseResource implements TimerListener {
 		 * The mean number of requests completed per second.
 		 */
 		private MetricDataSetHolder throughput;
+		
+		private MetricDataSetHolder hoggingThreads;
+		
+		private MetricDataSetHolder idleThreads;
 
 		protected ServerMetrics() {
 			super();
 			completedRequest = new MetricDataSetHolder("ServerCompletedRequest", "Completed Request",
 					"The number of completed requests in the priority queue", "Time", "Completed Request / 5 min", MetricDataSetType.COUNTER_TYPE,
-					100);
+					288);
 			
 			metricIndex.put(completedRequest.getInfo().getId(), completedRequest);
-			throughput = new MetricDataSetHolder("ServerThroughput", "Server Throughput",
-					"The mean number of requests completed per second", "Time", "Throughput",MetricDataSetType.GAUGE_TYPE, 100);
 			
+			throughput = new MetricDataSetHolder("ServerThroughput", "Server Throughput",
+					"The mean number of requests completed per second", "Time", "Throughput",MetricDataSetType.GAUGE_TYPE, 288);
 			metricIndex.put(throughput.getInfo().getId(), throughput);
+			
+			hoggingThreads = new MetricDataSetHolder("HoggingThreadCount", "Hogging Threads",
+					"The threads that are being held by a request right now.", "Time", "Threads",MetricDataSetType.GAUGE_TYPE, 288);
+			metricIndex.put(hoggingThreads.getInfo().getId(), hoggingThreads);
+			
+			idleThreads = new MetricDataSetHolder("ExecuteThreadIdleCount", "Idle Threads",
+					"The number of idle threads in the pool", "Time", "Threads",MetricDataSetType.GAUGE_TYPE, 288);
+			metricIndex.put(idleThreads.getInfo().getId(), idleThreads);
 
 		}
 		
@@ -94,6 +106,14 @@ public class ServerResource extends BaseResource implements TimerListener {
 
 		public MetricDataSetHolder getThroughput() {
 			return throughput;
+		}
+
+		public MetricDataSetHolder getHoggingThreads() {
+			return hoggingThreads;
+		}
+
+		public MetricDataSetHolder getIdleThreads() {
+			return idleThreads;
 		}
 	}
 
@@ -151,6 +171,8 @@ public class ServerResource extends BaseResource implements TimerListener {
 		super.destroy();
 	}
 
+	
+	
 	@GET
 	@Produces({ JSON_CONTENT_TYPE })
 	@Path("/{serverName}/metric")
@@ -166,6 +188,8 @@ public class ServerResource extends BaseResource implements TimerListener {
 			List<MetricDataSetInfo> returnValue = new ArrayList<MetricDataSetInfo>();
 			returnValue.add(serverMetrics.completedRequest.getInfo());
 			returnValue.add(serverMetrics.throughput.getInfo());
+			returnValue.add(serverMetrics.hoggingThreads.getInfo());
+			returnValue.add(serverMetrics.idleThreads.getInfo());
 
 			return returnValue;
 
@@ -270,7 +294,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 			TimerManager mgr = (TimerManager) inctxt
 					.lookup("java:comp/env/tm/default");
 			analyticsTimer = mgr.scheduleAtFixedRate(this, 0,
-					10000);
+					500);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
@@ -293,6 +317,8 @@ public class ServerResource extends BaseResource implements TimerListener {
 			/* set default values */
 			Long serverCompletedRequestCount = 0L;
 			Double serverThroughput = 0.0;
+			Integer serverHoggingTreadCount = 0;
+			Integer serverIdleThreadCount = 0;
 			Date sampleDate = new Date();
 
 			/* try to fetch the servers runtime info */
@@ -306,6 +332,8 @@ public class ServerResource extends BaseResource implements TimerListener {
 					serverCompletedRequestCount = _info
 							.getCompletedRequestCount();
 					serverThroughput = _info.getThroughput();
+					serverHoggingTreadCount = _info.getHoggingThreadCount();
+					serverIdleThreadCount = _info.getExecuteThreadIdleCount();
 				}
 			}
 
@@ -317,6 +345,9 @@ public class ServerResource extends BaseResource implements TimerListener {
 					new MetricSample(sampleDate, serverCompletedRequestCount));
 			serverMetrics.getThroughput().addSample(
 					new MetricSample(sampleDate, serverThroughput));
+			serverMetrics.getHoggingThreads().addSample(new MetricSample(sampleDate,serverHoggingTreadCount));
+			serverMetrics.getIdleThreads().addSample(new MetricSample(sampleDate,serverIdleThreadCount));
+			
 		}
 
 	}
