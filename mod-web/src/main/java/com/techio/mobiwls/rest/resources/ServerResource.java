@@ -48,7 +48,6 @@ import com.techio.mobiwls.jmx.ServerRuntimeMBeanWrapper;
 import com.techio.mobiwls.jmx.ThreadPoolRuntimeWrapper;
 import com.techio.mobiwls.rest.NoRuntimeAvailableException;
 import com.techio.mobiwls.rest.NotFoundException;
-import com.techio.mobiwls.rest.infoObjects.DomainInfo;
 import com.techio.mobiwls.rest.infoObjects.MetricsInfo;
 import com.techio.mobiwls.rest.infoObjects.ResourceVersion;
 import com.techio.mobiwls.rest.infoObjects.ServerInfo;
@@ -153,7 +152,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 			metrics.add(serverMetrics.throughput.getInfo());
 			metrics.add(serverMetrics.hoggingThreads.getInfo());
 			metrics.add(serverMetrics.idleThreads.getInfo());
-
+			
 			returnValue.getMetrics().addAll(metrics);
 
 			/* compute the hash from the toString */
