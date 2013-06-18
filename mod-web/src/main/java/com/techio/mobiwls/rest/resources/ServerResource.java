@@ -70,67 +70,89 @@ public class ServerResource extends BaseResource implements TimerListener {
 		/**
 		 * The number of completed requests in the priority queue
 		 */
-		private MetricDataSetHolder completedRequest;
-		private MetricDataSetHolder hoggingThreads;
+		private MetricDataSetHolder completedRequestMetrics;
 
-		private MetricDataSetHolder idleThreads;
+		/**
+		 * The number of hogging threads
+		 */
+		private MetricDataSetHolder hoggingThreadsMetrics;
+
+		/**
+		 * The number of idle threads
+		 */
+		private MetricDataSetHolder idleThreadsMetrics;
 
 		protected Map<String, MetricDataSetHolder> metricIndex = new HashMap<String, MetricDataSetHolder>();
 
 		/**
+		 * The current number of sockets registered for socket muxing on this server.
+		 */
+		private MetricDataSetHolder openSocketsMetrics;
+
+		/**
 		 * The mean number of requests completed per second.
 		 */
-		private MetricDataSetHolder throughput;
-
+		private MetricDataSetHolder throughputMetrics;
+		
 		protected ServerMetrics() {
 			super();
-			completedRequest = new MetricDataSetHolder(
+			completedRequestMetrics = new MetricDataSetHolder(
 					"ServerCompletedRequest", "Completed Request",
 					"The number of completed requests in the priority queue",
 					"Time", "Completed Request / 5 min",
 					MetricDataSetType.COUNTER_TYPE, 288);
 
-			metricIndex.put(completedRequest.getInfo().getId(),
-					completedRequest);
+			metricIndex.put(completedRequestMetrics.getInfo().getId(),
+					completedRequestMetrics);
 
-			throughput = new MetricDataSetHolder("ServerThroughput",
+			throughputMetrics = new MetricDataSetHolder("ServerThroughput",
 					"Server Throughput",
 					"The mean number of requests completed per second", "Time",
 					"Throughput", MetricDataSetType.GAUGE_TYPE, 288);
-			metricIndex.put(throughput.getInfo().getId(), throughput);
+			metricIndex.put(throughputMetrics.getInfo().getId(), throughputMetrics);
 
-			hoggingThreads = new MetricDataSetHolder("HoggingThreadCount",
+			hoggingThreadsMetrics = new MetricDataSetHolder("HoggingThreadCount",
 					"Hogging Threads",
 					"The threads that are being held by a request right now.",
 					"Time", "Threads", MetricDataSetType.GAUGE_TYPE, 288);
-			metricIndex.put(hoggingThreads.getInfo().getId(), hoggingThreads);
+			metricIndex.put(hoggingThreadsMetrics.getInfo().getId(), hoggingThreadsMetrics);
 
-			idleThreads = new MetricDataSetHolder("ExecuteThreadIdleCount",
+			idleThreadsMetrics = new MetricDataSetHolder("ExecuteThreadIdleCount",
 					"Idle Threads", "The number of idle threads in the pool",
 					"Time", "Threads", MetricDataSetType.GAUGE_TYPE, 288);
-			metricIndex.put(idleThreads.getInfo().getId(), idleThreads);
+			metricIndex.put(idleThreadsMetrics.getInfo().getId(), idleThreadsMetrics);
+			
+			openSocketsMetrics = new MetricDataSetHolder("OpenSocketsCurrentCount", "Open Sockets",
+					"The current number of sockets registered for socket muxing on this server.",
+					"Time", "Sockets", MetricDataSetType.GAUGE_TYPE, 288);
+			metricIndex.put(openSocketsMetrics.getInfo().getId(), openSocketsMetrics);
 
 		}
-
-		public MetricDataSetHolder getCompletedRequest() {
-			return completedRequest;
+		
+		public MetricDataSetHolder getCompletedRequestMetrics() {
+			return completedRequestMetrics;
+		}
+		public MetricDataSetHolder getHoggingThreadsMetrics() {
+			return hoggingThreadsMetrics;
 		}
 
-		public MetricDataSetHolder getHoggingThreads() {
-			return hoggingThreads;
-		}
-
-		public MetricDataSetHolder getIdleThreads() {
-			return idleThreads;
+		public MetricDataSetHolder getIdleThreadsMetrics() {
+			return idleThreadsMetrics;
 		}
 
 		public MetricDataSetHolder getMetricById(String metricId) {
 			return metricIndex.get(metricId);
 		}
 
-		public MetricDataSetHolder getThroughput() {
-			return throughput;
+		public MetricDataSetHolder getOpenSocketsMetrics() {
+			return openSocketsMetrics;
 		}
+		
+		public MetricDataSetHolder getThroughputMetrics() {
+			return throughputMetrics;
+		}
+
+		
 	}
 
 	private Timer analyticsTimer = null;
@@ -148,10 +170,11 @@ public class ServerResource extends BaseResource implements TimerListener {
 		try {
 			MetricsInfo returnValue = new MetricsInfo();
 			List<MetricDataSetInfo> metrics = new ArrayList<MetricDataSetInfo>();
-			metrics.add(serverMetrics.completedRequest.getInfo());
-			metrics.add(serverMetrics.throughput.getInfo());
-			metrics.add(serverMetrics.hoggingThreads.getInfo());
-			metrics.add(serverMetrics.idleThreads.getInfo());
+			metrics.add(serverMetrics.completedRequestMetrics.getInfo());
+			metrics.add(serverMetrics.throughputMetrics.getInfo());
+			metrics.add(serverMetrics.hoggingThreadsMetrics.getInfo());
+			metrics.add(serverMetrics.idleThreadsMetrics.getInfo());
+			metrics.add(serverMetrics.openSocketsMetrics.getInfo());
 			
 			returnValue.getMetrics().addAll(metrics);
 
@@ -387,6 +410,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 			Double serverThroughput = 0.0;
 			Integer serverHoggingTreadCount = 0;
 			Integer serverIdleThreadCount = 0;
+			Integer serverOpenSocketsCount = 0;
 			Date sampleDate = new Date();
 
 			/* try to fetch the servers runtime info */
@@ -396,6 +420,7 @@ public class ServerResource extends BaseResource implements TimerListener {
 			if (serverRuntime != null) {
 				ServerThreadPoolRuntimeInfo _info = getThreadPoolRuntimeInfo(serverInfo
 						.getName());
+				serverOpenSocketsCount = serverRuntime.getOpenSocketsCurrentCount();
 				if (_info != null) {
 					serverCompletedRequestCount = _info
 							.getCompletedRequestCount();
@@ -409,14 +434,17 @@ public class ServerResource extends BaseResource implements TimerListener {
 			 * now we have the samples (default or fetched from the server
 			 * runtime
 			 */
-			serverMetrics.getCompletedRequest().addSample(
+			serverMetrics.getCompletedRequestMetrics().addSample(
 					new MetricSample(sampleDate, serverCompletedRequestCount));
-			serverMetrics.getThroughput().addSample(
+			serverMetrics.getThroughputMetrics().addSample(
 					new MetricSample(sampleDate, serverThroughput));
-			serverMetrics.getHoggingThreads().addSample(
+			serverMetrics.getHoggingThreadsMetrics().addSample(
 					new MetricSample(sampleDate, serverHoggingTreadCount));
-			serverMetrics.getIdleThreads().addSample(
+			serverMetrics.getIdleThreadsMetrics().addSample(
 					new MetricSample(sampleDate, serverIdleThreadCount));
+			serverMetrics.getOpenSocketsMetrics().addSample(
+					new MetricSample(sampleDate, serverOpenSocketsCount));
+			
 
 		}
 
