@@ -18,8 +18,13 @@
 
 package com.techio.mobiwls.jmx;
 
+import java.awt.Component.BaselineResizeBehavior;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
+import com.techio.mobiwls.rest.infoObjects.HealthState;
+import com.techio.mobiwls.rest.resources.BaseResource;
 
 public class ServerRuntimeMBeanWrapper extends BaseMBeanWrapper {
 
@@ -73,6 +78,13 @@ public class ServerRuntimeMBeanWrapper extends BaseMBeanWrapper {
 
 	public Boolean isRestartRequired() {
 		return getBooleanAttribute("RestartRequired");
+	}
+	
+	public HealthState getHealthState() {
+		Object healthState = getAttribute("HealthState");
+		if(healthState != null) {
+			return BaseResource.getHealthState(BaseResource.convertWeblogicHealthState(healthState));
+		} else return null;
 	}
 	
 	

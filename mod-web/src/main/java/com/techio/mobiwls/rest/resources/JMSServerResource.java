@@ -171,6 +171,7 @@ public class JMSServerResource extends BaseResource implements TimerListener {
 		runtimeInfo.setMessagesReceivedCount(jmsServerRuntime
 				.getMessagesReceivedCount());
 		runtimeInfo.setProductionPaused(jmsServerRuntime.isProductionPaused());
+		runtimeInfo.setHealthState(jmsServerRuntime.getHealthState());
 		return runtimeInfo;
 	}
 

@@ -72,6 +72,19 @@ public class JMSServerRuntimeInfo {
 	 * The number of messages received on this JMS server since the last reset.
 	 */
 	public Long messagesReceivedCount;
+	
+	/**
+	 * The current number of destinations for this JMS server.
+	 */
+	public Long destinationsCurrentCount;
+	
+	/**
+	 * The health state of the server as reported by the server's self-health monitoring.
+	 */
+	public HealthState healthState;
+	
+	
+	
 
 	public Boolean getInsertionPaused() {
 		return insertionPaused;
@@ -143,6 +156,22 @@ public class JMSServerRuntimeInfo {
 
 	public void setMessagesReceivedCount(Long messagesReceivedCount) {
 		this.messagesReceivedCount = messagesReceivedCount;
+	}
+
+	public Long getDestinationsCurrentCount() {
+		return destinationsCurrentCount;
+	}
+
+	public void setDestinationsCurrentCount(Long destinationsCurrentCount) {
+		this.destinationsCurrentCount = destinationsCurrentCount;
+	}
+
+	public HealthState getHealthState() {
+		return healthState;
+	}
+
+	public void setHealthState(HealthState healthState) {
+		this.healthState = healthState;
 	}
 	
 }

@@ -204,7 +204,8 @@ public class ServerResource extends BaseResource implements TimerListener {
 		runtimeInfo.setServerClasspath(serverRuntime.getServerClasspath());
 		runtimeInfo.setState(serverRuntime.getState());
 		runtimeInfo.setWeblogicVersion(serverRuntime.getWeblogicVersion());
-
+		runtimeInfo.setHealthState(serverRuntime.getHealthState());
+		
 		return runtimeInfo;
 	}
 

@@ -21,6 +21,9 @@ package com.techio.mobiwls.jmx;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import com.techio.mobiwls.rest.infoObjects.HealthState;
+import com.techio.mobiwls.rest.resources.BaseResource;
+
 /**
  * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
  * 
@@ -97,5 +100,13 @@ public class JMSServerRuntimeMBeanWrapper extends BaseMBeanWrapper {
 	public Boolean isProductionPaused() {
 		return getBooleanAttribute("ProductionPaused");
 	}
+	
+	public HealthState getHealthState() {
+		Object healthState = getAttribute("HealthState");
+		if(healthState != null) {
+			return BaseResource.getHealthState(BaseResource.convertWeblogicHealthState(healthState));
+		} else return null;
+	}
+	
 
 }

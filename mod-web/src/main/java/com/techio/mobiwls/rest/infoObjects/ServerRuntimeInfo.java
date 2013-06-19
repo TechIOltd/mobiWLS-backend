@@ -38,6 +38,8 @@ public class ServerRuntimeInfo {
 	public String state;
 
 	public String weblogicVersion;
+	
+	public HealthState healthState;
 
 	public Long getActivationTime() {
 		return activationTime;
@@ -101,5 +103,13 @@ public class ServerRuntimeInfo {
 
 	public void setWeblogicVersion(String weblogicVersion) {
 		this.weblogicVersion = weblogicVersion;
+	}
+
+	public HealthState getHealthState() {
+		return healthState;
+	}
+
+	public void setHealthState(HealthState healthState) {
+		this.healthState = healthState;
 	}
 }
