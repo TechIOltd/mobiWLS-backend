@@ -18,6 +18,7 @@
 
 package com.techio.mobiwls.rest.resources;
 
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -163,6 +164,25 @@ public class BaseResource {
 	protected MBeanServer lookupRuntimeServiceMBean() throws NamingException {
 		return (MBeanServer) InitialContext
 				.doLookup("java:comp/env/jmx/runtime");
+	}
+
+	protected int convertWeblogicHealthState(Object healthStatus) {
+		/*
+		 * to avoid linking with weblogic.jar (at least for now) use
+		 * reflection to get the value of the weblogic.health.HealthState
+		 * instance
+		 */
+		try {
+			@SuppressWarnings("rawtypes")
+			Class clazz = Class.forName("weblogic.health.HealthState");
+			@SuppressWarnings("unchecked")
+			Method getStateMethod = clazz.getMethod("getState");
+	
+			Integer state = (Integer) getStateMethod.invoke(healthStatus);
+			return state;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 }

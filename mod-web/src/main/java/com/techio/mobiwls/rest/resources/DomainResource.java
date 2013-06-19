@@ -17,7 +17,6 @@
  */
 package com.techio.mobiwls.rest.resources;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -63,22 +62,12 @@ public class DomainResource extends BaseResource {
 					.getAttribute(domainRuntimeServiceMBeanObjectName,
 							"ServerRuntimes");
 			HealthStatusOverview returnValue = new HealthStatusOverview();
-			/*
-			 * to avoid linking with weblogic.jar (at least for now) use
-			 * reflection to get the value of the weblogic.health.HealthState
-			 * instance
-			 */
-			@SuppressWarnings("rawtypes")
-			Class clazz = Class.forName("weblogic.health.HealthState");
-			@SuppressWarnings("unchecked")
-			Method getStateMethod = clazz.getMethod("getState");
 			for (ObjectName serverMBean : serverRuntimeMBeans) {
 				Object healthStatus = domainRuntimeServiceMBean.getAttribute(
 						serverMBean, "HealthState");
 				String serverName = getStringAttribute(
 						domainRuntimeServiceMBean, serverMBean, "Name");
-				Integer state = (Integer) getStateMethod.invoke(healthStatus);
-				switch (state.intValue()) {
+				switch (convertWeblogicHealthState(healthStatus)) {
 				case HealthState.HEALTH_CRITICAL:
 					returnValue.getCriticalServers().add(serverName);
 					break;
