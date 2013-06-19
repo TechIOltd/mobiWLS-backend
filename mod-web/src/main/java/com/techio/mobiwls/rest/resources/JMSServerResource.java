@@ -66,9 +66,20 @@ public class JMSServerResource extends BaseResource implements TimerListener {
 	public static class ServerMetrics {
 
 		/**
+		 * The number of bytes received on this JMS server since the last
+		 * reset.
+		 */
+		private MetricDataSetHolder bytesReceivedCountMetrics;
+		/**
+		 * The current number of bytes stored on this JMS server
+		 */
+		private MetricDataSetHolder bytesCurrentCountMetrics;
+		
+		/**
 		 * The current number of messages stored on this JMS server
 		 */
 		private MetricDataSetHolder messagesCurrentCountMetrics;
+
 		/**
 		 * The number of messages received on this JMS server since the last
 		 * reset.
@@ -76,7 +87,6 @@ public class JMSServerResource extends BaseResource implements TimerListener {
 		private MetricDataSetHolder messagesReceivedCountMetrics;
 
 		protected Map<String, MetricDataSetHolder> metricIndex = new HashMap<String, MetricDataSetHolder>();
-
 		protected ServerMetrics() {
 			super();
 
@@ -94,7 +104,30 @@ public class JMSServerResource extends BaseResource implements TimerListener {
 					"Time", "Messages", MetricDataSetType.COUNTER_TYPE, 288);
 			metricIndex.put(messagesReceivedCountMetrics.getInfo().getId(),
 					messagesReceivedCountMetrics);
+			
+			bytesCurrentCountMetrics = new MetricDataSetHolder(
+					"bytesCurrentCount", "Current Bytes",
+					"The current number of bytes stored on this JMS server",
+					"Time", "Bytes", MetricDataSetType.COUNTER_TYPE, 288);
+			metricIndex.put(bytesCurrentCountMetrics.getInfo().getId(),
+					bytesCurrentCountMetrics);
 
+			bytesReceivedCountMetrics = new MetricDataSetHolder(
+					"bytesCurrentCount",
+					"Received Bytes",
+					"The number of bytes received on this JMS server since the last reset.",
+					"Time", "Bytes", MetricDataSetType.COUNTER_TYPE, 288);
+			metricIndex.put(bytesReceivedCountMetrics.getInfo().getId(),
+					bytesReceivedCountMetrics);
+
+		}
+
+		public MetricDataSetHolder getByteReceivedCountMetrics() {
+			return bytesReceivedCountMetrics;
+		}
+
+		public MetricDataSetHolder getBytesCurrentCountMetrics() {
+			return bytesCurrentCountMetrics;
 		}
 
 		public MetricDataSetHolder getMessagesCurrentCountMetrics() {
@@ -153,6 +186,10 @@ public class JMSServerResource extends BaseResource implements TimerListener {
 			metrics.add(serverMetrics.getMessagesCurrentCountMetrics()
 					.getInfo());
 			metrics.add(serverMetrics.getMessagesReceivedCountMetrics()
+					.getInfo());
+			metrics.add(serverMetrics.getBytesCurrentCountMetrics()
+					.getInfo());
+			metrics.add(serverMetrics.getByteReceivedCountMetrics()
 					.getInfo());
 
 			returnValue.getMetrics().addAll(metrics);
@@ -338,6 +375,8 @@ public class JMSServerResource extends BaseResource implements TimerListener {
 			/* set default values */
 			Long serverReceivedMessages = 0L;
 			Long serverCurrentMessages = 0L;
+			Long serverReceivedBytes = 0L;
+			Long serverCurrentBytes = 0L;
 
 			Date sampleDate = new Date();
 
@@ -350,6 +389,10 @@ public class JMSServerResource extends BaseResource implements TimerListener {
 						.getMessagesCurrentCount();
 				serverReceivedMessages = jmsServerRuntime
 						.getMessagesReceivedCount();
+				serverCurrentBytes = jmsServerRuntime
+						.getBytesCurrentCount();
+				serverReceivedBytes = jmsServerRuntime
+						.getBytesReceivedCount();
 			}
 
 			/*
@@ -360,6 +403,10 @@ public class JMSServerResource extends BaseResource implements TimerListener {
 					new MetricSample(sampleDate, serverCurrentMessages));
 			serverMetrics.getMessagesReceivedCountMetrics().addSample(
 					new MetricSample(sampleDate, serverReceivedMessages));
+			serverMetrics.getBytesCurrentCountMetrics().addSample(
+					new MetricSample(sampleDate, serverCurrentBytes));
+			serverMetrics.getByteReceivedCountMetrics().addSample(
+					new MetricSample(sampleDate, serverReceivedBytes));
 		}
 
 	}
