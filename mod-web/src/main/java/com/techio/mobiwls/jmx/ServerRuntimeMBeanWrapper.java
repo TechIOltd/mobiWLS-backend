@@ -61,6 +61,11 @@ public class ServerRuntimeMBeanWrapper extends BaseMBeanWrapper {
 		return new ThreadPoolRuntimeWrapper(getMbeanServer(),
 				(ObjectName) getAttribute("ThreadPoolRuntime"));
 	}
+	
+	public JMSRuntimeMBeanWrapper getJMSRuntimeMBean() {
+		return new JMSRuntimeMBeanWrapper(getMbeanServer(),
+				(ObjectName) getAttribute("JMSRuntime"));
+	}
 
 	public String getWeblogicVersion() {
 		return getStringAttribute("WeblogicVersion");
@@ -69,5 +74,7 @@ public class ServerRuntimeMBeanWrapper extends BaseMBeanWrapper {
 	public Boolean isRestartRequired() {
 		return getBooleanAttribute("RestartRequired");
 	}
+	
+	
 
 }

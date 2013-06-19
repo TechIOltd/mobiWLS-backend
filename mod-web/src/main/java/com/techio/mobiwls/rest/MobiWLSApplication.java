@@ -25,6 +25,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import com.techio.mobiwls.rest.resources.DomainResource;
+import com.techio.mobiwls.rest.resources.JMSServerResource;
 import com.techio.mobiwls.rest.resources.ServerResource;
 
 /**
@@ -39,6 +40,7 @@ public class MobiWLSApplication extends Application {
 		Set<Class<?>> s = new HashSet<Class<?>>();
 		s.add(DomainResource.class);
 		s.add(ServerResource.class);
+		s.add(JMSServerResource.class);
 		return s;
 	}
 }

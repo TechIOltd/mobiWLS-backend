@@ -33,7 +33,9 @@ import javax.naming.NamingException;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
+import com.techio.mobiwls.jmx.JMSServerMBeanWrapper;
 import com.techio.mobiwls.jmx.ServerMBeanWrapper;
+import com.techio.mobiwls.rest.infoObjects.JMSServerInfo;
 import com.techio.mobiwls.rest.infoObjects.ServerInfo;
 
 /**
@@ -74,6 +76,12 @@ public class BaseResource {
 			ServerMBeanWrapper serverMBean) {
 		ServerInfo sinfo = new ServerInfo();
 		sinfo.setName(serverMBean.getName());
+		return sinfo;
+	}
+	
+	protected JMSServerInfo constructMinimalJMSServerInfo(JMSServerMBeanWrapper jmsServerMBean) {
+		JMSServerInfo sinfo = new JMSServerInfo();
+		sinfo.setName(jmsServerMBean.getName());
 		return sinfo;
 	}
 

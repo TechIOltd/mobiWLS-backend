@@ -81,6 +81,19 @@ public class DomainMBeanWrapper extends BaseMBeanWrapper {
 		}
 		return _result;
 	}
+	
+	public JMSServerMBeanWrapper getJMSServer(String jmsServerName) {
+		ObjectName serverMBeans[] = (ObjectName[]) JMXUtils.getAttribute(
+				mbeanServer, mbean, "JMSServers");
+		for (ObjectName mbean : serverMBeans) {
+			if (JMXUtils.getStringAttribute(mbeanServer, mbean, "Name").equals(
+					jmsServerName)) {
+				return new JMSServerMBeanWrapper(mbeanServer, mbean);
+			} else
+				continue;
+		}
+		return null;
+	}
 
 	public Long getLastModificationTime() {
 		return getLongAttribute("LastModificationTime");

@@ -29,6 +29,11 @@ public class JMSServerInfo {
 	 * valid.)
 	 */
 	private String name;
+	
+	/**
+	 * runtime information related to this server
+	 */
+	private JMSServerRuntimeInfo runtimeInfo;
 
 	public String getName() {
 		return name;
@@ -41,6 +46,14 @@ public class JMSServerInfo {
 	@Override
 	public String toString() {
 		return "JMSServerInfo [name=" + name + "]";
+	}
+
+	public JMSServerRuntimeInfo getRuntimeInfo() {
+		return runtimeInfo;
+	}
+
+	public void setRuntimeInfo(JMSServerRuntimeInfo runtimeInfo) {
+		this.runtimeInfo = runtimeInfo;
 	}
 
 }

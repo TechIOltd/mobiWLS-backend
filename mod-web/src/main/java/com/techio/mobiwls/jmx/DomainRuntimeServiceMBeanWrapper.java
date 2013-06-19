@@ -20,6 +20,7 @@ package com.techio.mobiwls.jmx;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -82,6 +83,19 @@ public class DomainRuntimeServiceMBeanWrapper {
 		try {
 			return (ObjectName[]) domainRuntimeServiceMBeanServer.getAttribute(
 					domainRuntimeServiceMBeanObjectName, "ServerRuntimes");
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	public JMSServerRuntimeMBeanWrapper getJMSServerRuntime(String jmsServerName) {
+		try {
+			ObjectName obj = new ObjectName(String.format(
+					"com.bea:*,Name=%s,Type=JMSServerRuntime", jmsServerName));
+			Set<ObjectName> result = domainRuntimeServiceMBeanServer.queryNames(obj, null);
+			if(!result.isEmpty()) {
+				return new JMSServerRuntimeMBeanWrapper(domainRuntimeServiceMBeanServer, (ObjectName)(result.toArray())[0]);
+			} else return null;
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
