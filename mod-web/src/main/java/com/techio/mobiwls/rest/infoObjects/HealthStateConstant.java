@@ -18,14 +18,10 @@
 
 package com.techio.mobiwls.rest.infoObjects;
 
-/**
- * @author <a href="mailto:filip@techio.com">Filip Slavik</a>
- *
- */
-public enum HealthState {
-	HEALTH_OK,
-	HEALTH_WARN,
-	HEALTH_CRITICAL,
-	HEALTH_FAILED,
-	HEALTH_OVERLOADED,
+public interface HealthStateConstant {
+	public static final int HEALTH_CRITICAL = 2;
+	public static final int HEALTH_FAILED = 3;
+	public static final int HEALTH_OK = 0;
+	public static final int HEALTH_OVERLOADED = 4;
+	public static final int HEALTH_WARN = 1;
 }

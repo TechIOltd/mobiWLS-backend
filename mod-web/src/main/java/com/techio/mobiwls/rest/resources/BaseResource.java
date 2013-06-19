@@ -36,6 +36,8 @@ import net.sf.ehcache.CacheManager;
 
 import com.techio.mobiwls.jmx.JMSServerMBeanWrapper;
 import com.techio.mobiwls.jmx.ServerMBeanWrapper;
+import com.techio.mobiwls.rest.infoObjects.HealthState;
+import com.techio.mobiwls.rest.infoObjects.HealthStateConstant;
 import com.techio.mobiwls.rest.infoObjects.JMSServerInfo;
 import com.techio.mobiwls.rest.infoObjects.ServerInfo;
 
@@ -166,7 +168,36 @@ public class BaseResource {
 				.doLookup("java:comp/env/jmx/runtime");
 	}
 
-	protected int convertWeblogicHealthState(Object healthStatus) {
+	/**
+	 * Convert a 'weblogic.health.HealthState' int value to the corresponding {@link HealthState} enum
+	 * @param healthStateValue a int value obtained from {@link #convertWeblogicHealthState(Object)}
+	 * @return 
+	 * 
+	 * @see #convertWeblogicHealthState(Object)
+	 */
+	public static HealthState getHealthState(int healthStateValue) {
+		switch (healthStateValue) {
+		case HealthStateConstant.HEALTH_CRITICAL:
+			return HealthState.HEALTH_CRITICAL;
+		case HealthStateConstant.HEALTH_FAILED:
+			return HealthState.HEALTH_FAILED;
+		case HealthStateConstant.HEALTH_OK:
+			return HealthState.HEALTH_OK;
+		case HealthStateConstant.HEALTH_OVERLOADED:
+			return HealthState.HEALTH_OVERLOADED;
+		case HealthStateConstant.HEALTH_WARN:
+			return HealthState.HEALTH_WARN;
+		default:
+			return null;
+		}
+	}
+	
+	/**
+	 * Fetch the int value of a 'weblogic.health.HealthState' instance.
+	 * @param healthStatus An object instance of 'weblogic.health.HealthState' class
+	 * @return
+	 */
+	public static int convertWeblogicHealthState(Object healthStatus) {
 		/*
 		 * to avoid linking with weblogic.jar (at least for now) use
 		 * reflection to get the value of the weblogic.health.HealthState

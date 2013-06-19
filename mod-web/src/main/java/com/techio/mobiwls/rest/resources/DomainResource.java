@@ -42,7 +42,7 @@ import com.techio.mobiwls.jmx.ServerMBeanWrapper;
 import com.techio.mobiwls.rest.infoObjects.ClusterInfo;
 import com.techio.mobiwls.rest.infoObjects.DeploymentInfo;
 import com.techio.mobiwls.rest.infoObjects.DomainInfo;
-import com.techio.mobiwls.rest.infoObjects.HealthState;
+import com.techio.mobiwls.rest.infoObjects.HealthStateConstant;
 import com.techio.mobiwls.rest.infoObjects.HealthStatusOverview;
 import com.techio.mobiwls.rest.infoObjects.JDBCResourceInfo;
 import com.techio.mobiwls.rest.infoObjects.JMSServerInfo;
@@ -68,19 +68,19 @@ public class DomainResource extends BaseResource {
 				String serverName = getStringAttribute(
 						domainRuntimeServiceMBean, serverMBean, "Name");
 				switch (convertWeblogicHealthState(healthStatus)) {
-				case HealthState.HEALTH_CRITICAL:
+				case HealthStateConstant.HEALTH_CRITICAL:
 					returnValue.getCriticalServers().add(serverName);
 					break;
-				case HealthState.HEALTH_FAILED:
+				case HealthStateConstant.HEALTH_FAILED:
 					returnValue.getFailedServers().add(serverName);
 					break;
-				case HealthState.HEALTH_OK:
+				case HealthStateConstant.HEALTH_OK:
 					returnValue.getHealthyServers().add(serverName);
 					break;
-				case HealthState.HEALTH_OVERLOADED:
+				case HealthStateConstant.HEALTH_OVERLOADED:
 					returnValue.getOverloadedServers().add(serverName);
 					break;
-				case HealthState.HEALTH_WARN:
+				case HealthStateConstant.HEALTH_WARN:
 					returnValue.getWarningServers().add(serverName);
 					break;
 				}
